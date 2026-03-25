@@ -1108,6 +1108,24 @@
   .promo-title { font-size: 13px; font-weight: 700; color: var(--gold); }
   .promo-body { font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
 </style>
+
+  <!-- PWA: App-Like Behaviour on iPhone -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ninja Learning">
+  <meta name="theme-color" content="#1A1A2E">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log('SW registered'))
+          .catch(err => console.log('SW error:', err));
+      });
+    }
+  </script>
+  <!-- END PWA -->
 </head>
 <body>
 
