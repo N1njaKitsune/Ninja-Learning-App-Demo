@@ -294,6 +294,24 @@ html{background:#1a1a2e;}body{font-family:-apple-system,BlinkMacSystemFont,'Sego
 .my-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;background:var(--bb);color:var(--bt);margin-left:5px;}
 @media(max-width:400px){.g3,.g4{grid-template-columns:1fr 1fr;}.sv{font-size:18px;}}
 </style>
+
+  <!-- PWA: App-Like Behaviour on iPhone -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ninja Learning">
+  <meta name="theme-color" content="#1A1A2E">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log('SW registered'))
+          .catch(err => console.log('SW error:', err));
+      });
+    }
+  </script>
+  <!-- END PWA -->
 </head>
 <body>
 <div class="shell">
