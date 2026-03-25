@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ninja Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;overflow:hidden;background:#080816;}
+
+/* ── PHONE SHELL ── */
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1a1a2e;}
+.shell{
+  width:390px;height:844px;
+  background:#080816;
+  border-radius:44px;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.12),0 0 0 8px #0d0d1a,0 0 0 9px rgba(255,255,255,0.06),0 40px 100px rgba(0,0,0,0.8);
+  overflow:hidden;position:relative;
+  display:flex;flex-direction:column;
+}
+/* Desktop: fill screen if small */
+@media(max-width:430px){
+  body{background:#080816;}
+  .shell{width:100vw;height:100vh;border-radius:0;box-shadow:none;}
+}
+@media(max-height:860px) and (min-width:431px){
+  .shell{transform:scale(0.92);transform-origin:center center;}
+}
+
+/* ── BACKGROUND ── */
+.bg{position:absolute;inset:0;z-index:0;overflow:hidden;}
+.bg-grad{position:absolute;inset:0;background:radial-gradient(ellipse 90% 60% at 50% 30%,#1e1e40 0%,#080816 70%);}
+.bg-stars{position:absolute;inset:0;background-image:
+  radial-gradient(1.5px 1.5px at 10% 15%,rgba(255,255,255,.5) 0%,transparent 100%),
+  radial-gradient(1px 1px at 25% 40%,rgba(255,255,255,.3) 0%,transparent 100%),
+  radial-gradient(2px 2px at 40% 8%,rgba(255,255,255,.4) 0%,transparent 100%),
+  radial-gradient(1px 1px at 55% 60%,rgba(255,255,255,.25) 0%,transparent 100%),
+  radial-gradient(1.5px 1.5px at 70% 25%,rgba(255,255,255,.45) 0%,transparent 100%),
+  radial-gradient(1px 1px at 80% 70%,rgba(255,255,255,.3) 0%,transparent 100%),
+  radial-gradient(1px 1px at 92% 18%,rgba(255,255,255,.35) 0%,transparent 100%),
+  radial-gradient(1px 1px at 15% 75%,rgba(255,255,255,.28) 0%,transparent 100%),
+  radial-gradient(1px 1px at 50% 88%,rgba(255,255,255,.2) 0%,transparent 100%),
+  radial-gradient(1px 1px at 88% 50%,rgba(255,255,255,.22) 0%,transparent 100%);
+}
+.bg-glow{position:absolute;width:300px;height:300px;top:-80px;left:50%;transform:translateX(-50%);
+  background:radial-gradient(circle,rgba(200,149,26,0.08) 0%,transparent 70%);
+  animation:pulse 4s ease-in-out infinite alternate;}
+@keyframes pulse{from{opacity:.6;transform:translateX(-50%) scale(1);}to{opacity:1;transform:translateX(-50%) scale(1.1);}}
+
+/* ── STATUS BAR ── */
+.status-bar{height:44px;padding:14px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0;position:relative;z-index:10;}
+.status-icons{display:flex;gap:5px;align-items:center;}
+
+/* ── CONTENT ── */
+.content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 28px 40px;position:relative;z-index:1;}
+
+/* ── LOGO ── */
+.logo-wrap{text-align:center;margin-bottom:48px;}
+.logo-icon{width:72px;height:72px;margin:0 auto 16px;position:relative;}
+.logo-icon-bg{position:absolute;inset:0;border-radius:20px;
+  background:radial-gradient(circle at 50% 40%,rgba(200,149,26,.18) 0%,rgba(200,149,26,.04) 100%);
+  border:1px solid rgba(200,149,26,.3);
+  animation:iconPulse 4s ease-in-out infinite alternate;}
+@keyframes iconPulse{
+  from{box-shadow:0 0 30px rgba(200,149,26,.1);border-color:rgba(200,149,26,.25);}
+  to{box-shadow:0 0 60px rgba(200,149,26,.25);border-color:rgba(200,149,26,.5);}
+}
+.logo-icon svg{position:relative;z-index:1;width:100%;height:100%;padding:18px;}
+.logo-title{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:#fff;letter-spacing:.05em;text-shadow:0 0 40px rgba(200,149,26,.4);}
+.logo-sub{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:6px;}
+
+/* ── CARDS ── */
+.cards{width:100%;display:flex;flex-direction:column;gap:12px;}
+.card{
+  width:100%;padding:20px;border-radius:18px;cursor:pointer;
+  display:flex;align-items:center;gap:16px;
+  border:1px solid rgba(255,255,255,.08);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+  position:relative;overflow:hidden;text-align:left;background:none;
+}
+.card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .18s ease;}
+.card:active{transform:scale(.97);}
+
+.card.parent{background:linear-gradient(135deg,rgba(26,18,4,.8) 0%,rgba(14,10,2,.6) 100%);}
+.card.parent:active,.card.parent:hover{border-color:rgba(200,149,26,.5);box-shadow:0 12px 40px rgba(200,149,26,.15);}
+.card.instructor{background:linear-gradient(135deg,rgba(6,20,4,.8) 0%,rgba(3,12,2,.6) 100%);}
+.card.instructor:active,.card.instructor:hover{border-color:rgba(90,205,48,.4);box-shadow:0 12px 40px rgba(90,205,48,.1);}
+
+.card-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.parent .card-icon{background:linear-gradient(135deg,rgba(200,149,26,.22) 0%,rgba(200,149,26,.08) 100%);border:1px solid rgba(200,149,26,.25);}
+.instructor .card-icon{background:linear-gradient(135deg,rgba(90,205,48,.18) 0%,rgba(90,205,48,.06) 100%);border:1px solid rgba(90,205,48,.2);}
+
+.card-text{flex:1;}
+.card-name{font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:#fff;letter-spacing:.02em;margin-bottom:3px;}
+.card-desc{font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.4);line-height:1.4;}
+.card-arrow{font-size:18px;color:rgba(255,255,255,.3);flex-shrink:0;}
+
+/* ── FOOTER ── */
+.footer{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
+  font-family:'DM Sans',sans-serif;font-size:10px;color:rgba(255,255,255,.18);
+  letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;}
+
+/* ── HOME INDICATOR ── */
+.home-bar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+  width:120px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;z-index:50;}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="bg"><div class="bg-grad"></div><div class="bg-stars"></div><div class="bg-glow"></div></div>
+
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="status-icons">
+      <svg width="16" height="10" viewBox="0 0 16 10" fill="none"><rect x="0" y="3" width="3" height="7" rx="1" fill="rgba(255,255,255,.4)"/><rect x="4.5" y="2" width="3" height="8" rx="1" fill="rgba(255,255,255,.6)"/><rect x="9" y="0" width="3" height="10" rx="1" fill="white"/><rect x="13.5" y=".5" width="2" height="9" rx=".5" stroke="rgba(255,255,255,.5)" fill="none" stroke-width=".8"/></svg>
+      <svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M8 2C9.8 2 11.4 2.8 12.6 4L14 2.5C12.4.9 10.3 0 8 0 5.7 0 3.6.9 2 2.5L3.4 4C4.6 2.8 6.2 2 8 2Z" fill="white"/><path d="M8 5C9.1 5 10.1 5.5 10.8 6.2L12.2 4.7C11.1 3.7 9.6 3 8 3 6.4 3 4.9 3.7 3.8 4.7L5.2 6.2C5.9 5.5 6.9 5 8 5Z" fill="white"/><circle cx="8" cy="9" r="1.5" fill="white"/></svg>
+      <svg width="25" height="11" viewBox="0 0 25 11" fill="none"><rect x=".5" y=".5" width="21" height="10" rx="2.5" stroke="rgba(255,255,255,.35)" stroke-width="1"/><rect x="22.5" y="3" width="2" height="5" rx="1" fill="rgba(255,255,255,.3)"/><rect x="1.5" y="1.5" width="18" height="8" rx="2" fill="white"/></svg>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <div class="logo-icon-bg"></div>
+        <svg viewBox="0 0 40 40" fill="none">
+          <path d="M20 4L23.5 16.5H36L25.5 23L29 35.5L20 28.5L11 35.5L14.5 23L4 16.5H16.5Z" fill="rgba(200,149,26,.12)" stroke="#C8951A" stroke-width="1.2" stroke-linejoin="round"/>
+          <circle cx="20" cy="20" r="3.5" fill="#C8951A" opacity=".8"/>
+        </svg>
+      </div>
+      <div class="logo-title">Ninja Learning</div>
+      <div class="logo-sub">Stage 1 · The Dojo Portal</div>
+    </div>
+
+    <div class="cards">
+      <button class="card parent" onclick="window.location.href='NinjaLearning_Parent.html'">
+        <div class="card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F0C830" stroke-width="1.5">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="card-text">
+          <div class="card-name">Family Profile</div>
+          <div class="card-desc">John Gunn · Kai & Mia · Portrait</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </button>
+
+      <button class="card instructor" onclick="window.location.href='NinjaLearning_Instructor.html'">
+        <div class="card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a0e870" stroke-width="1.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="card-text">
+          <div class="card-name">Instructor App</div>
+          <div class="card-desc">Harry Bovill · Lead Instructor · Portrait</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="footer">Working Doc v1.3 · March 2026</div>
+  <div class="home-bar"></div>
+</div>
+</body>
+</html>

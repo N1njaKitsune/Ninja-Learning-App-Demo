@@ -1,0 +1,2320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Ninja Learning — Family Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1A1A2E;
+    --ink-mid: #2C2C44;
+    --ink-soft: #4A4A6A;
+    --ash: #9494AA;
+    --fog: #E8E8F0;
+    --snow: #F7F7FA;
+    --white: #FFFFFF;
+    --gold: #C8951A;
+    --gold-light: #F0C830;
+    --gold-faint: #FDF5E0;
+    --red-belt: #C42020;
+    --green-belt: #2E7D22;
+    --grey-belt: #888888;
+    --black-belt: #1A1A1A;
+    --orange-belt: #E8702A;
+    --white-belt: #E8E8E8;
+    --success: #2E7D22;
+    --success-bg: #EAF3DE;
+    --warn: #C8951A;
+    --warn-bg: #FDF5E0;
+    --danger: #C42020;
+    --danger-bg: #FAECE7;
+    --info: #185FA5;
+    --info-bg: #E6F1FB;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 16px rgba(26,26,46,0.10);
+    --shadow-sm: 0 1px 6px rgba(26,26,46,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #1a1a2e;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Phone shell */
+  .phone {
+    width: 390px;
+    height: 844px;
+    background: var(--snow);
+    border-radius: 44px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.6);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 44px;
+    padding: 14px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+  }
+  .status-bar.dark { background: var(--ink); color: #fff; }
+  .status-bar.light { background: var(--snow); color: var(--ink); }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .status-icons svg { width: 16px; height: 10px; }
+
+  /* Screens */
+  .screen {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+  }
+  .screen.active { display: flex; }
+
+  /* Scrollable content */
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .scroll-area::-webkit-scrollbar { display: none; }
+
+  /* ===== LOCK SCREEN ===== */
+  #screen-lock {
+    background: var(--ink);
+  }
+  .lock-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 20%, #2C2C55 0%, var(--ink) 60%);
+    overflow: hidden;
+  }
+  .lock-bg::before {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    border: 1px solid rgba(200,149,26,0.12);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -80%);
+  }
+  .lock-bg::after {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    border: 1px solid rgba(200,149,26,0.06);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -60%);
+  }
+  .lock-content {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 24px 0;
+  }
+  .lock-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .lock-title {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .lock-subtitle {
+    font-size: 13px;
+    color: var(--ash);
+    margin-bottom: 24px;
+  }
+  .student-tiles {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .student-tile {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 16px;
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .student-tile:hover { background: rgba(255,255,255,0.10); transform: translateY(-1px); }
+  .student-tile:active { transform: scale(0.97); }
+  .tile-avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    margin: 0 auto 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .tile-name { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+  .tile-age { font-size: 11px; color: var(--ash); margin-bottom: 6px; }
+  .tile-belt {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    color: var(--ash);
+    background: rgba(255,255,255,0.07);
+    border-radius: 20px;
+    padding: 3px 8px;
+  }
+  .belt-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .tile-no-pass {
+    font-size: 10px;
+    color: var(--ash);
+    margin-top: 4px;
+  }
+
+  .divider-text {
+    color: var(--ash);
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin: 4px 0 16px;
+    position: relative;
+    width: 100%;
+    text-align: center;
+  }
+  .divider-text::before, .divider-text::after {
+    content: '';
+    position: absolute;
+    top: 50%; width: 35%;
+    height: 1px;
+    background: rgba(255,255,255,0.10);
+  }
+  .divider-text::before { left: 0; }
+  .divider-text::after { right: 0; }
+
+  .family-login-btn {
+    width: 100%;
+    background: rgba(200,149,26,0.15);
+    border: 1px solid rgba(200,149,26,0.35);
+    border-radius: 14px;
+    padding: 14px;
+    color: var(--gold-light);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+  .family-login-btn:hover { background: rgba(200,149,26,0.22); }
+  
+  .lock-icon { font-size: 16px; }
+
+  /* Passcode overlay */
+  .passcode-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(10,10,25,0.92);
+    z-index: 50;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+  }
+  .passcode-overlay.open { display: flex; }
+  .passcode-title {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .passcode-sub { font-size: 13px; color: var(--ash); margin-bottom: 28px; }
+  .passcode-dots {
+    display: flex; gap: 14px; margin-bottom: 36px;
+  }
+  .passcode-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.30);
+    background: transparent;
+    transition: all 0.15s;
+  }
+  .passcode-dot.filled { background: var(--gold); border-color: var(--gold); }
+  .passcode-dot.error { background: var(--danger); border-color: var(--danger); }
+  .numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 72px);
+    gap: 14px;
+  }
+  .num-btn {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .num-btn:active { background: rgba(255,255,255,0.20); transform: scale(0.94); }
+  .num-btn.del { font-size: 16px; }
+  .num-btn.empty { visibility: hidden; }
+  .passcode-cancel {
+    margin-top: 20px;
+    background: none; border: none;
+    color: var(--ash); font-size: 14px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottom-nav {
+    height: 80px;
+    background: var(--white);
+    border-top: 1px solid var(--fog);
+    display: flex;
+    align-items: flex-start;
+    padding-top: 10px;
+    flex-shrink: 0;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: all 0.15s;
+  }
+  .nav-item svg { width: 22px; height: 22px; }
+  .nav-label { font-size: 10px; font-weight: 500; color: var(--ash); }
+  .nav-item.active .nav-label { color: var(--gold); }
+  .nav-item.active svg path, .nav-item.active svg circle, .nav-item.active svg rect {
+    stroke: var(--gold);
+  }
+  .nav-item svg path, .nav-item svg circle, .nav-item svg rect {
+    stroke: var(--ash);
+  }
+  .nav-badge {
+    position: absolute;
+    top: -3px; right: -3px;
+    width: 16px; height: 16px;
+    background: var(--red-belt);
+    border-radius: 50%;
+    font-size: 9px;
+    font-weight: 700;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    border: 1.5px solid #fff;
+  }
+  .nav-icon-wrap { position: relative; }
+
+  /* ===== PAGE HEADER ===== */
+  .page-header {
+    padding: 16px 20px 12px;
+    flex-shrink: 0;
+  }
+  .page-header.dark {
+    background: var(--ink);
+    padding-bottom: 16px;
+  }
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 2px;
+    font-family: 'Cinzel', serif;
+  }
+  .header-title {
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .header-title.light { color: #fff; }
+  .header-sub { font-size: 13px; color: var(--ash); margin-top: 2px; }
+  .header-sub.light { color: rgba(255,255,255,0.50); }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--fog);
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .card-dark {
+    background: var(--ink-mid);
+    border-radius: var(--radius);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ash);
+    padding: 0 20px;
+    margin-bottom: 8px;
+    margin-top: 4px;
+  }
+
+  /* Belt visual */
+  .belt-visual {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+  .stripe-pip {
+    width: 14px; height: 5px;
+    border-radius: 3px;
+    background: var(--fog);
+  }
+  .stripe-pip.earned { background: var(--gold); }
+  .stripe-pip.half { background: linear-gradient(90deg, var(--gold) 50%, var(--fog) 50%); }
+
+  /* ===== HOME SCREEN ===== */
+  #screen-home {
+    background: var(--snow);
+  }
+  .home-hero {
+    background: var(--ink);
+    padding: 0 20px 20px;
+    flex-shrink: 0;
+  }
+  .home-greeting { font-size: 22px; font-weight: 300; color: #fff; margin-bottom: 2px; }
+  .home-greeting strong { font-weight: 600; }
+  .home-date { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+  .student-overview-card {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: var(--radius);
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .student-overview-card:last-child { margin-bottom: 0; }
+  .student-overview-card:active { transform: scale(0.98); }
+  .soc-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700;
+    color: var(--ink); flex-shrink: 0;
+  }
+  .soc-name { font-size: 15px; font-weight: 600; color: #fff; }
+  .soc-meta { font-size: 12px; color: rgba(255,255,255,0.50); margin-bottom: 6px; }
+  .soc-belt-row { display: flex; align-items: center; gap: 8px; }
+  .belt-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+  .soc-stripes { display: flex; gap: 6px; align-items: center; }
+  .el-badge {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .el-badge.air-full   { background: #2A2A3A; border: 1.5px solid #FFFFFF; }
+  .el-badge.earth-full { background: #1A4010; border: 1.5px solid #5ACD30; }
+  .el-badge.water-full { background: #0E2260; border: 1.5px solid #4488FF; }
+  .el-badge.fire-full  { background: #6A1A05; border: 1.5px solid #FF6A20; }
+  .el-badge.air-half   { background: linear-gradient(90deg, #2A2A3A 50%, rgba(255,255,255,0.06) 50%); border: 1.5px solid rgba(255,255,255,0.35); }
+  .el-badge.earth-half { background: linear-gradient(90deg, #1A4010 50%, rgba(255,255,255,0.06) 50%); border: 1.5px solid rgba(90,205,48,0.40); }
+  .el-badge.water-half { background: linear-gradient(90deg, #0E2260 50%, rgba(255,255,255,0.06) 50%); border: 1.5px solid rgba(68,136,255,0.40); }
+  .el-badge.fire-half  { background: linear-gradient(90deg, #6A1A05 50%, rgba(255,255,255,0.06) 50%); border: 1.5px solid rgba(255,106,32,0.40); }
+  .el-badge.ghost { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.14); }
+  .el-badge svg { width: 14px; height: 14px; }
+
+  .alert-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(200,149,26,0.20);
+    border: 1px solid rgba(200,149,26,0.35);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 11px; font-weight: 600;
+    color: var(--gold-light);
+    margin-top: 6px;
+    cursor: pointer;
+  }
+  .alert-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-light); }
+
+  /* Term info strip */
+  .term-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 16px 20px;
+    background: var(--white);
+    border-bottom: 1px solid var(--fog);
+    flex-shrink: 0;
+  }
+  .term-stat { text-align: center; }
+  .term-stat-val { font-size: 22px; font-weight: 600; color: var(--ink); font-family: 'Cinzel', serif; }
+  .term-stat-label { font-size: 10px; color: var(--ash); margin-top: 1px; letter-spacing: 0.5px; }
+
+  /* Notifications */
+  .notif-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--fog);
+  }
+  .notif-item:last-child { border-bottom: none; }
+  .notif-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .notif-title { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .notif-body { font-size: 12px; color: var(--ash); line-height: 1.4; margin-top: 1px; }
+  .notif-time { font-size: 10px; color: var(--ash); margin-top: 2px; }
+
+  /* Upcoming events */
+  .event-item {
+    display: flex; gap: 12px; align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--fog);
+  }
+  .event-item:last-child { border-bottom: none; }
+  .event-date-box {
+    width: 40px; height: 44px;
+    background: var(--snow);
+    border-radius: 10px;
+    border: 1px solid var(--fog);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .event-day { font-size: 18px; font-weight: 700; color: var(--ink); line-height: 1; }
+  .event-month { font-size: 9px; font-weight: 600; letter-spacing: 0.5px; color: var(--ash); text-transform: uppercase; }
+  .event-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .event-detail { font-size: 12px; color: var(--ash); }
+
+  /* ===== ATTENDANCE SCREEN ===== */
+  #screen-attendance {
+    background: var(--snow);
+  }
+  .attendance-header {
+    background: var(--ink);
+    padding: 0 20px 20px;
+  }
+
+  .class-today-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .class-today-name { font-size: 15px; font-weight: 600; color: #fff; }
+  .class-today-time { font-size: 12px; color: rgba(255,255,255,0.50); margin-bottom: 10px; }
+  .attendance-actions { display: flex; gap: 8px; }
+  .att-btn {
+    flex: 1; padding: 10px 8px;
+    border-radius: 10px;
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    transition: all 0.15s;
+  }
+  .att-btn:active { transform: scale(0.97); }
+  .att-btn.attend {
+    background: rgba(46,125,34,0.25);
+    border: 1px solid rgba(46,125,34,0.40);
+    color: #5ACD30;
+  }
+  .att-btn.absent {
+    background: rgba(196,32,32,0.20);
+    border: 1px solid rgba(196,32,32,0.35);
+    color: #FF7777;
+  }
+  .att-btn.late {
+    background: rgba(200,149,26,0.20);
+    border: 1px solid rgba(200,149,26,0.35);
+    color: var(--gold-light);
+  }
+  .att-btn.selected-attend { background: rgba(46,125,34,0.50); }
+  .att-btn.selected-absent { background: rgba(196,32,32,0.50); }
+  .att-btn.selected-late { background: rgba(200,149,26,0.50); }
+
+  /* Makeup class flow */
+  .makeup-info-box {
+    background: var(--info-bg);
+    border: 1px solid rgba(24,95,165,0.20);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  .makeup-count-row {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+  }
+  .makeup-label { font-size: 13px; font-weight: 600; color: var(--info); }
+  .makeup-pips { display: flex; gap: 5px; }
+  .makeup-pip {
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 1.5px solid var(--info);
+    background: transparent;
+  }
+  .makeup-pip.used { background: var(--info); }
+  .makeup-pip.available { background: transparent; }
+  .makeup-note { font-size: 11px; color: var(--info); }
+
+  .class-option {
+    background: var(--white);
+    border: 1px solid var(--fog);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .class-option:active { transform: scale(0.98); }
+  .class-option.selected-class {
+    border-color: var(--success);
+    background: var(--success-bg);
+  }
+  .class-option-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .class-option-meta { font-size: 11px; color: var(--ash); }
+  .class-spaces {
+    font-size: 11px; font-weight: 600;
+    padding: 3px 8px; border-radius: 20px;
+    background: var(--success-bg);
+    color: var(--success);
+  }
+  .class-spaces.tight {
+    background: var(--warn-bg);
+    color: var(--warn);
+  }
+
+  .submit-btn {
+    width: 100%;
+    background: var(--gold);
+    color: var(--ink);
+    border: none;
+    border-radius: var(--radius);
+    padding: 15px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+    margin-top: 8px;
+  }
+  .submit-btn:hover { background: var(--gold-light); }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { background: var(--fog); color: var(--ash); cursor: default; }
+
+  .confirm-banner {
+    display: none;
+    background: var(--success-bg);
+    border: 1px solid rgba(46,125,34,0.30);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-size: 13px;
+    color: var(--success);
+    font-weight: 500;
+    margin-top: 8px;
+    text-align: center;
+  }
+  .confirm-banner.show { display: block; }
+
+  /* ===== FAMILY ACCOUNT ===== */
+  #screen-family {
+    background: var(--snow);
+  }
+
+  .family-avatar-row {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;
+  }
+  .family-member-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--white);
+    border: 1px solid var(--fog);
+    border-radius: 30px;
+    padding: 6px 12px 6px 6px;
+  }
+  .fm-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--ink);
+  }
+  .fm-name { font-size: 12px; font-weight: 500; color: var(--ink); }
+  .fm-role { font-size: 10px; color: var(--ash); }
+
+  .student-manage-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px;
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--fog);
+    margin-bottom: 8px;
+  }
+  .smi-info { flex: 1; }
+  .smi-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .smi-detail { font-size: 12px; color: var(--ash); }
+  .status-pill {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    padding: 4px 9px; border-radius: 20px;
+    text-transform: uppercase;
+  }
+  .status-active { background: var(--success-bg); color: var(--success); }
+  .status-inactive { background: var(--warn-bg); color: var(--warn); }
+
+  .action-row {
+    display: flex; gap: 8px;
+  }
+  .action-btn {
+    flex: 1; padding: 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--fog);
+    background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600; color: var(--ink);
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .action-btn:active { background: var(--snow); }
+  .action-btn.danger { border-color: rgba(196,32,32,0.30); color: var(--danger); background: var(--danger-bg); }
+  .action-btn.primary { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+
+  /* Transfer flow */
+  .transfer-panel {
+    background: var(--info-bg);
+    border: 1px solid rgba(24,95,165,0.20);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .transfer-title { font-size: 13px; font-weight: 700; color: var(--info); margin-bottom: 10px; }
+
+  /* Add student CTA */
+  .add-student-btn {
+    width: 100%;
+    border: 2px dashed rgba(200,149,26,0.40);
+    border-radius: var(--radius);
+    padding: 18px;
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600;
+    color: var(--gold);
+    transition: all 0.2s;
+    margin-bottom: 10px;
+  }
+  .add-student-btn:hover { background: var(--gold-faint); }
+
+  /* ===== BILLING ===== */
+  #screen-billing { background: var(--snow); }
+
+  .billing-total-card {
+    background: var(--ink);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .billing-total-label { font-size: 12px; color: rgba(255,255,255,0.50); letter-spacing: 1px; margin-bottom: 4px; }
+  .billing-total-amount { font-family: 'Cinzel', serif; font-size: 36px; font-weight: 700; color: #fff; }
+  .billing-total-period { font-size: 12px; color: rgba(255,255,255,0.40); margin-top: 2px; }
+
+  .billing-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--fog);
+  }
+  .billing-row:last-child { border-bottom: none; }
+  .billing-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+  .billing-plan { font-size: 12px; color: var(--ash); }
+  .billing-amount { font-size: 14px; font-weight: 700; color: var(--ink); }
+
+  .next-billing-strip {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--snow);
+    border: 1px solid var(--fog);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-top: 8px;
+  }
+  .nbs-label { font-size: 12px; color: var(--ash); }
+  .nbs-date { font-size: 13px; font-weight: 600; color: var(--ink); }
+
+  .membership-action-row { display: flex; gap: 8px; margin-top: 12px; }
+  .mem-btn {
+    flex: 1; padding: 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--fog);
+    background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600; color: var(--ink);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .mem-btn.upgrade { background: var(--gold-faint); border-color: rgba(200,149,26,0.40); color: var(--gold); }
+  .mem-btn.cancel { color: var(--danger); border-color: rgba(196,32,32,0.25); background: var(--danger-bg); }
+
+  /* ===== SHOP ===== */
+  #screen-shop { background: var(--snow); }
+
+  .shop-categories {
+    display: flex; gap: 8px; overflow-x: auto;
+    padding: 0 20px 12px;
+    scrollbar-width: none;
+    flex-shrink: 0;
+  }
+  .shop-categories::-webkit-scrollbar { display: none; }
+  .cat-chip {
+    white-space: nowrap;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    border: 1px solid var(--fog);
+    background: var(--white);
+    color: var(--ink);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .cat-chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .shop-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .shop-item {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--fog);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .shop-item:active { transform: scale(0.97); }
+  .shop-item-img {
+    height: 100px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 42px;
+  }
+  .shop-item-body { padding: 10px; }
+  .shop-item-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+  .shop-item-desc { font-size: 11px; color: var(--ash); margin-bottom: 6px; line-height: 1.3; }
+  .shop-item-price { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .shop-item-cta {
+    display: block; width: 100%;
+    margin-top: 6px; padding: 7px;
+    background: var(--gold-faint);
+    border: 1px solid rgba(200,149,26,0.30);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 700; color: var(--gold);
+    cursor: pointer; text-align: center;
+  }
+
+  /* ===== BELL + NOTIFICATIONS PANEL ===== */
+  .bell-btn {
+    position: relative;
+    background: none; border: none; cursor: pointer;
+    padding: 4px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .bell-btn svg { width: 22px; height: 22px; }
+  .bell-btn svg path { stroke: rgba(255,255,255,0.55); }
+  .bell-btn.has-unread svg path { stroke: var(--gold-light); }
+  .bell-badge {
+    position: absolute; top: 0; right: 0;
+    width: 16px; height: 16px;
+    background: var(--red-belt);
+    border-radius: 50%;
+    font-size: 9px; font-weight: 700; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    border: 1.5px solid var(--ink);
+  }
+
+  /* Notifications slide-in panel */
+  .notif-panel {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 100;
+    display: flex; flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+    background: var(--snow);
+  }
+  .notif-panel.open { transform: translateX(0); }
+  .notif-panel-header {
+    background: var(--ink);
+    padding: 16px 20px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .notif-panel-title {
+    font-family: 'Cinzel', serif;
+    font-size: 18px; font-weight: 700; color: #fff;
+  }
+  .notif-close-btn {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    color: rgba(255,255,255,0.70);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 5px 12px; cursor: pointer;
+  }
+  .notif-filter-row {
+    display: flex; gap: 8px; overflow-x: auto;
+    padding: 12px 20px;
+    background: var(--white);
+    border-bottom: 1px solid var(--fog);
+    flex-shrink: 0;
+    scrollbar-width: none;
+  }
+  .notif-filter-row::-webkit-scrollbar { display: none; }
+  .notif-chip {
+    white-space: nowrap;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+    border: 1px solid var(--fog);
+    background: var(--white); color: var(--ink);
+    cursor: pointer;
+  }
+  .notif-chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .notif-group-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--ash);
+    padding: 14px 20px 6px;
+  }
+  .notif-row {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--fog);
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .notif-row:hover { background: var(--snow); }
+  .notif-row.unread { background: rgba(200,149,26,0.05); }
+  .notif-row-icon {
+    width: 38px; height: 38px;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; flex-shrink: 0;
+  }
+  .notif-row-title { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .notif-row-body { font-size: 12px; color: var(--ash); line-height: 1.4; margin-top: 1px; }
+  .notif-row-time { font-size: 10px; color: var(--ash); margin-top: 3px; }
+  .unread-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--gold); flex-shrink: 0; margin-top: 5px;
+  }
+
+  /* Challenge action inside notif panel */
+  .notif-action-strip {
+    display: flex; gap: 7px; margin-top: 8px;
+  }
+  .notif-action-btn {
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 700;
+    cursor: pointer; border: none; transition: all 0.15s;
+  }
+  .notif-action-btn.gold { background: var(--gold); color: var(--ink); }
+  .notif-action-btn.ghost { background: var(--snow); border: 1px solid var(--fog); color: var(--ink); }
+
+  /* ===== CHALLENGE BANNER ===== */
+  .challenge-banner {
+    background: linear-gradient(135deg, #1A1A2E 0%, #2C2244 100%);
+    border-radius: var(--radius);
+    padding: 16px;
+    border: 1px solid rgba(200,149,26,0.30);
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .challenge-banner::before {
+    content: '';
+    position: absolute;
+    right: -20px; top: -20px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    border: 1px solid rgba(200,149,26,0.15);
+  }
+  .cb-eyebrow { font-size: 10px; letter-spacing: 2px; color: var(--gold); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+  .cb-title { font-family: 'Cinzel', serif; font-size: 16px; color: #fff; margin-bottom: 4px; }
+  .cb-body { font-size: 12px; color: rgba(255,255,255,0.60); line-height: 1.5; margin-bottom: 12px; }
+  .cb-actions { display: flex; gap: 8px; }
+  .cb-btn {
+    flex: 1; padding: 10px;
+    border-radius: var(--radius-sm);
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 700;
+    transition: all 0.15s;
+  }
+  .cb-btn.set { background: var(--gold); color: var(--ink); }
+  .cb-btn.confirm { background: rgba(46,125,34,0.25); border: 1px solid rgba(46,125,34,0.40); color: #5ACD30; }
+
+  /* Challenge set form */
+  .challenge-form { margin-top: 10px; display: none; }
+  .challenge-form.open { display: block; }
+  .challenge-input {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.20);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    margin-bottom: 8px;
+    resize: none;
+  }
+  .challenge-input::placeholder { color: rgba(255,255,255,0.35); }
+  .challenge-input:focus { outline: none; border-color: var(--gold); }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    background: var(--white);
+    border-bottom: 1px solid var(--fog);
+    padding: 0 20px;
+    flex-shrink: 0;
+  }
+  .tab {
+    padding: 12px 4px;
+    margin-right: 24px;
+    font-size: 13px; font-weight: 600; color: var(--ash);
+    border-bottom: 2px solid transparent;
+    cursor: pointer; transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .tab.active { color: var(--ink); border-bottom-color: var(--gold); }
+
+  /* Tab content */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ===== MISC ===== */
+  .inline-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase; color: var(--ash);
+    display: block; margin-bottom: 4px;
+  }
+  .row-spacer { height: 16px; }
+  .px20 { padding-left: 20px; padding-right: 20px; }
+
+  .chevron {
+    width: 16px; height: 16px; flex-shrink: 0;
+    border-right: 2px solid var(--ash);
+    border-top: 2px solid var(--ash);
+    transform: rotate(45deg);
+    margin-top: 1px;
+  }
+  .chevron.light {
+    border-color: rgba(255,255,255,0.35);
+  }
+
+  .success-flash {
+    display: none;
+    text-align: center; padding: 12px;
+    background: var(--success-bg);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(46,125,34,0.25);
+    font-size: 13px; font-weight: 600; color: var(--success);
+    margin-top: 8px;
+  }
+  .success-flash.show { display: block; }
+
+  /* Belt stripe display */
+  .belt-display {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 18px;
+    width: 60px;
+    border: 1px solid rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+
+  /* Promotion notice */
+  .promo-notice {
+    background: linear-gradient(135deg, rgba(200,149,26,0.15), rgba(200,149,26,0.08));
+    border: 1px solid rgba(200,149,26,0.35);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex; gap: 10px; align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .promo-icon { font-size: 22px; flex-shrink: 0; }
+  .promo-title { font-size: 13px; font-weight: 700; color: var(--gold); }
+  .promo-body { font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<!-- =================== PHONE SHELL =================== -->
+<div class="phone" id="app">
+  <button onclick="window.location.href='NinjaLearning_Demo.html'" style="position:absolute;top:52px;left:14px;z-index:500;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:5px 12px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:rgba(255,255,255,0.8);cursor:pointer;display:flex;align-items:center;gap:4px;">‹ Demo</button>
+
+  <!-- =================== LOCK SCREEN =================== -->
+  <div class="screen active" id="screen-lock">
+    <div class="status-bar dark">
+      <span>9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 16 10" fill="none"><rect x="0" y="3" width="3" height="7" rx="1" fill="rgba(255,255,255,0.4)"/><rect x="4.5" y="2" width="3" height="8" rx="1" fill="rgba(255,255,255,0.6)"/><rect x="9" y="0" width="3" height="10" rx="1" fill="white"/><rect x="13.5" y="0.5" width="2" height="9" rx="0.5" stroke="rgba(255,255,255,0.5)" fill="none" stroke-width="0.8"/></svg>
+        <svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M8 2C9.8 2 11.4 2.8 12.6 4L14 2.5C12.4 0.9 10.3 0 8 0C5.7 0 3.6 0.9 2 2.5L3.4 4C4.6 2.8 6.2 2 8 2Z" fill="white"/><path d="M8 5C9.1 5 10.1 5.5 10.8 6.2L12.2 4.7C11.1 3.7 9.6 3 8 3C6.4 3 4.9 3.7 3.8 4.7L5.2 6.2C5.9 5.5 6.9 5 8 5Z" fill="white"/><circle cx="8" cy="9" r="1.5" fill="white"/></svg>
+      </div>
+    </div>
+    <div class="lock-bg"></div>
+    <div class="lock-content">
+      <div class="lock-logo">Ninja Learning</div>
+      <div class="lock-title">The Gunn Family</div>
+      <div class="lock-subtitle">Select a student to continue</div>
+
+      <div class="student-tiles">
+        <div class="student-tile" onclick="goToStudentFromLock('kai')">
+          <div class="tile-avatar" style="background: #F0C830;">K</div>
+          <div class="tile-name">Kai</div>
+          <div class="tile-age">Age 9</div>
+          <div class="tile-belt">
+            <span class="belt-dot" style="background:#C42020;"></span>
+            Honoo Belt
+          </div>
+          <div class="tile-no-pass">No passcode</div>
+        </div>
+        <div class="student-tile" onclick="goToStudentFromLock('mia')">
+          <div class="tile-avatar" style="background: #A8D8F0;">M</div>
+          <div class="tile-name">Mia</div>
+          <div class="tile-age">Age 7</div>
+          <div class="tile-belt">
+            <span class="belt-dot" style="background:#E8702A;"></span>
+            Taiyo Belt
+          </div>
+          <div class="tile-no-pass">No passcode</div>
+        </div>
+      </div>
+
+      <div class="divider-text">or</div>
+
+      <button class="family-login-btn" onclick="openPasscode()">
+        <span class="lock-icon">🔒</span> Enter Family Account
+      </button>
+
+    </div>
+
+    <!-- Passcode Overlay -->
+    <div class="passcode-overlay" id="passcode-overlay">
+      <div class="passcode-title">Family Account</div>
+      <div class="passcode-sub">Enter your 4-digit passcode</div>
+      <div class="passcode-dots" id="passcode-dots">
+        <div class="passcode-dot" id="dot-0"></div>
+        <div class="passcode-dot" id="dot-1"></div>
+        <div class="passcode-dot" id="dot-2"></div>
+        <div class="passcode-dot" id="dot-3"></div>
+      </div>
+      <div class="numpad">
+        <button class="num-btn" onclick="enterDigit(1)">1</button>
+        <button class="num-btn" onclick="enterDigit(2)">2</button>
+        <button class="num-btn" onclick="enterDigit(3)">3</button>
+        <button class="num-btn" onclick="enterDigit(4)">4</button>
+        <button class="num-btn" onclick="enterDigit(5)">5</button>
+        <button class="num-btn" onclick="enterDigit(6)">6</button>
+        <button class="num-btn" onclick="enterDigit(7)">7</button>
+        <button class="num-btn" onclick="enterDigit(8)">8</button>
+        <button class="num-btn" onclick="enterDigit(9)">9</button>
+        <button class="num-btn empty"></button>
+        <button class="num-btn" onclick="enterDigit(0)">0</button>
+        <button class="num-btn del" onclick="deleteDigit()">⌫</button>
+      </div>
+      <button class="passcode-cancel" onclick="closePasscode()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- =================== HOME SCREEN =================== -->
+  <div class="screen" id="screen-home">
+    <div class="status-bar dark"><span>9:41</span><div class="status-icons" style="gap:10px;">
+      <button class="bell-btn has-unread" onclick="openNotifPanel()">
+        <svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><path d="M11 3C11 3 7 5 7 11V16H15V11C15 5 11 3 11 3Z" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 16C9 17.1 9.9 18 11 18C12.1 18 13 17.1 13 16"/><path d="M11 3V2" stroke-linecap="round"/></svg>
+        <div class="bell-badge">3</div>
+      </button>
+      <svg viewBox="0 0 16 10" fill="none"><rect x="0" y="3" width="3" height="7" rx="1" fill="rgba(255,255,255,0.4)"/><rect x="4.5" y="2" width="3" height="8" rx="1" fill="rgba(255,255,255,0.6)"/><rect x="9" y="0" width="3" height="10" rx="1" fill="white"/><rect x="13.5" y="0.5" width="2" height="9" rx="0.5" stroke="rgba(255,255,255,0.5)" fill="none" stroke-width="0.8"/></svg>
+    </div></div>
+
+    <!-- NOTIFICATIONS PANEL (slides in over Home) -->
+    <div class="notif-panel" id="notif-panel">
+      <div class="status-bar dark" style="flex-shrink:0;"><span>9:41</span></div>
+      <div class="notif-panel-header">
+        <div class="notif-panel-title">Notifications</div>
+        <button class="notif-close-btn" onclick="closeNotifPanel()">Close</button>
+      </div>
+      <div class="notif-filter-row">
+        <div class="notif-chip active" onclick="filterNotif('all',this)">All</div>
+        <div class="notif-chip" onclick="filterNotif('challenge',this)">Challenges</div>
+        <div class="notif-chip" onclick="filterNotif('stripes',this)">Stripes</div>
+        <div class="notif-chip" onclick="filterNotif('attendance',this)">Attendance</div>
+        <div class="notif-chip" onclick="filterNotif('billing',this)">Billing</div>
+      </div>
+      <div style="flex:1; overflow-y:auto; scrollbar-width:none;">
+        <div class="notif-group-label">Today</div>
+
+        <div class="notif-row unread" data-cat="challenge">
+          <div class="notif-row-icon" style="background:var(--gold-faint);">🏆</div>
+          <div style="flex:1;">
+            <div class="notif-row-title">Action required — Kai's challenge</div>
+            <div class="notif-row-body">Kai has earned all 4 Honoo Belt stripes. Set a Two-Week Personal Challenge to unlock belt promotion.</div>
+            <div class="notif-action-strip">
+              <button class="notif-action-btn gold" onclick="closeNotifPanel(); document.querySelector('.challenge-banner').scrollIntoView()">Set Challenge</button>
+              <button class="notif-action-btn ghost" onclick="confirmChallenge()">Mark Complete</button>
+            </div>
+            <div class="notif-row-time">Today, 6:15pm</div>
+          </div>
+          <div class="unread-dot"></div>
+        </div>
+
+        <div class="notif-row unread" data-cat="stripes">
+          <div class="notif-row-icon" style="background:var(--gold-faint);">🥋</div>
+          <div style="flex:1;">
+            <div class="notif-row-title">Kai earned a 4th stripe</div>
+            <div class="notif-row-body">Air stripe awarded by Harry Bovill · Honoo Belt now complete</div>
+            <div class="notif-row-time">Today, 6:12pm</div>
+          </div>
+          <div class="unread-dot"></div>
+        </div>
+
+        <div class="notif-row unread" data-cat="stripes">
+          <div class="notif-row-icon" style="background:var(--gold-faint);">🥋</div>
+          <div style="flex:1;">
+            <div class="notif-row-title">Mia earned a stripe</div>
+            <div class="notif-row-body">Earth stripe awarded by Harry Bovill · Taiyo Belt progress: 2 of 4</div>
+            <div class="notif-row-time">Today, 4:47pm</div>
+          </div>
+          <div class="unread-dot"></div>
+        </div>
+
+        <div class="notif-group-label">Yesterday</div>
+
+        <div class="notif-row" data-cat="attendance">
+          <div class="notif-row-icon" style="background:var(--info-bg);">📋</div>
+          <div style="flex:1;">
+            <div class="notif-row-title">Attendance confirmed</div>
+            <div class="notif-row-body">Mia attended Monday class · Harry Bovill · 4:05pm</div>
+            <div class="notif-row-time">Yesterday, 4:45pm</div>
+          </div>
+        </div>
+
+        <div class="notif-group-label">14 March</div>
+
+        <div class="notif-row" data-cat="billing">
+          <div class="notif-row-icon" style="background:var(--success-bg);">✓</div>
+          <div style="flex:1;">
+            <div class="notif-row-title">Payment processed</div>
+            <div class="notif-row-body">£114.99 — March payment · Visa •••• 4411</div>
+            <div class="notif-row-time">14 Mar, 9:00am</div>
+          </div>
+        </div>
+
+        <div class="notif-row" data-cat="stripes">
+          <div class="notif-row-icon" style="background:var(--gold-faint);">🥋</div>
+          <div style="flex:1;">
+            <div class="notif-row-title">Kai earned a stripe</div>
+            <div class="notif-row-body">Water stripe awarded by Harry Bovill · Honoo Belt progress: 3 of 4</div>
+            <div class="notif-row-time">13 Mar, 6:20pm</div>
+          </div>
+        </div>
+
+        <div class="notif-row" data-cat="challenge">
+          <div class="notif-row-icon" style="background:var(--success-bg);">🏅</div>
+          <div style="flex:1;">
+            <div class="notif-row-title">Challenge completed — Shin Honoo Belt awarded</div>
+            <div class="notif-row-body">Kai's Two-Week Challenge confirmed. Belt promotion recorded by Harry Bovill.</div>
+            <div class="notif-row-time">28 Feb, 5:40pm</div>
+          </div>
+        </div>
+
+        <div style="height:20px;"></div>
+      </div>
+    </div>
+
+    <div class="home-hero">
+      <div class="page-header" style="padding-top:8px; padding-bottom: 14px;">
+        <div class="header-eyebrow">Good morning</div>
+        <div class="home-greeting"><strong>The Gunn Family</strong></div>
+        <div class="home-date" style="margin-top:2px;">Wednesday, 25 March · Spring Term</div>
+      </div>
+
+      <!-- Students overview -->
+      <div style="padding: 0 20px;">
+        <div class="student-overview-card" onclick="showAttendanceFor('Kai')">
+          <div class="soc-avatar" style="background:#F0C830;">K</div>
+          <div style="flex:1;">
+            <div class="soc-name">Kai Gunn</div>
+            <div class="soc-meta">Age 9 · Tue & Thu, 5pm</div>
+            <div class="soc-belt-row" style="flex-wrap:wrap; gap:5px;">
+              <span class="belt-tag" style="background:rgba(196,32,32,0.25); color:#FF8888;">Honoo Belt</span>
+            </div>
+            <div class="soc-stripes" style="margin-top:7px;">
+              <!-- Air: two curved wind lines + dot -->
+              <div class="el-badge air-full">
+                <svg viewBox="0 0 14 14" fill="none">
+                  <path d="M3 5C3 5 5 3.5 7 5C9 6.5 11 5 11 5" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round"/>
+                  <path d="M3 8C3 8 5 6.5 7 8C9 9.5 11 8 11 8" stroke="rgba(255,255,255,0.55)" stroke-width="1.2" stroke-linecap="round"/>
+                  <circle cx="7" cy="11" r="1" fill="rgba(255,255,255,0.70)"/>
+                </svg>
+              </div>
+              <!-- Earth: downward triangle + midbar -->
+              <div class="el-badge earth-full">
+                <svg viewBox="0 0 14 14" fill="none">
+                  <path d="M7 10L3 5H11L7 10Z" fill="#5ACD30"/>
+                  <line x1="3" y1="7.5" x2="11" y2="7.5" stroke="#1A4010" stroke-width="1.2"/>
+                </svg>
+              </div>
+              <!-- Water: teardrop + wave -->
+              <div class="el-badge water-full">
+                <svg viewBox="0 0 14 14" fill="none">
+                  <path d="M7 3C7 3 4 6.5 4 8.5C4 10.4 5.3 11.5 7 11.5C8.7 11.5 10 10.4 10 8.5C10 6.5 7 3 7 3Z" fill="#4488FF"/>
+                  <path d="M3.5 9.5C4.5 9 5.5 10 6.5 9.5" stroke="rgba(255,255,255,0.60)" stroke-width="1" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <!-- Fire: abstracted flame -->
+              <div class="el-badge fire-full">
+                <svg viewBox="0 0 14 14" fill="none">
+                  <path d="M7 2C7 2 10 5 10 8C10 10.2 8.7 12 7 12C5.3 12 4 10.2 4 8C4 6 5.5 4.5 5.5 4.5C5.5 4.5 5.8 6.5 7 7C7 7 8.5 5.5 7 2Z" fill="#FF6A20"/>
+                </svg>
+              </div>
+            </div>
+            <div class="alert-pill" onclick="event.stopPropagation(); showChallengeModal()">
+              <div class="alert-dot"></div>Challenge Pending — Tap to set
+            </div>
+          </div>
+          <div class="chevron light" style="margin-top:10px;"></div>
+        </div>
+
+        <div class="student-overview-card" onclick="showAttendanceFor('Mia')">
+          <div class="soc-avatar" style="background:#A8D8F0;">M</div>
+          <div style="flex:1;">
+            <div class="soc-name">Mia Gunn</div>
+            <div class="soc-meta">Age 7 · Mon & Wed, 4pm</div>
+            <div class="soc-belt-row" style="flex-wrap:wrap; gap:5px;">
+              <span class="belt-tag" style="background:rgba(232,112,42,0.25); color:#FFB07A;">Taiyo Belt</span>
+            </div>
+            <div class="soc-stripes" style="margin-top:7px;">
+              <!-- Air: earned -->
+              <div class="el-badge air-full">
+                <svg viewBox="0 0 14 14" fill="none">
+                  <path d="M3 5C3 5 5 3.5 7 5C9 6.5 11 5 11 5" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round"/>
+                  <path d="M3 8C3 8 5 6.5 7 8C9 9.5 11 8 11 8" stroke="rgba(255,255,255,0.55)" stroke-width="1.2" stroke-linecap="round"/>
+                  <circle cx="7" cy="11" r="1" fill="rgba(255,255,255,0.70)"/>
+                </svg>
+              </div>
+              <!-- Earth: earned -->
+              <div class="el-badge earth-full">
+                <svg viewBox="0 0 14 14" fill="none">
+                  <path d="M7 10L3 5H11L7 10Z" fill="#5ACD30"/>
+                  <line x1="3" y1="7.5" x2="11" y2="7.5" stroke="#1A4010" stroke-width="1.2"/>
+                </svg>
+              </div>
+              <!-- Water: unearned -->
+              <div class="el-badge ghost">
+                <svg viewBox="0 0 14 14" fill="none">
+                  <path d="M7 3C7 3 4 6.5 4 8.5C4 10.4 5.3 11.5 7 11.5C8.7 11.5 10 10.4 10 8.5C10 6.5 7 3 7 3Z" fill="rgba(255,255,255,0.12)"/>
+                  <path d="M3.5 9.5C4.5 9 5.5 10 6.5 9.5" stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <!-- Fire: unearned -->
+              <div class="el-badge ghost">
+                <svg viewBox="0 0 14 14" fill="none">
+                  <path d="M7 2C7 2 10 5 10 8C10 10.2 8.7 12 7 12C5.3 12 4 10.2 4 8C4 6 5.5 4.5 5.5 4.5C5.5 4.5 5.8 6.5 7 7C7 7 8.5 5.5 7 2Z" fill="rgba(255,255,255,0.12)"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="chevron light" style="margin-top:10px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Term stats -->
+    <div class="term-strip">
+      <div class="term-stat">
+        <div class="term-stat-val">7</div>
+        <div class="term-stat-label">Classes Left</div>
+      </div>
+      <div class="term-stat">
+        <div class="term-stat-val">3</div>
+        <div class="term-stat-label">Upcoming Events</div>
+      </div>
+      <div class="term-stat">
+        <div class="term-stat-val">2</div>
+        <div class="term-stat-label">Makeups Left</div>
+      </div>
+    </div>
+
+    <div class="scroll-area">
+      <div class="px20">
+
+        <!-- Challenge banner — persists until challenge is set -->
+        <div class="row-spacer"></div>
+        <div class="challenge-banner" id="challenge-banner">
+          <div class="cb-eyebrow">Action Required</div>
+          <div class="cb-title">Kai has earned all 4 stripes!</div>
+          <div class="cb-body">Kai has completed the Honoo Belt requirements. Set a Two-Week Personal Challenge to unlock belt promotion. This banner stays until the challenge is set.</div>
+          <div class="cb-actions" id="cb-actions-row">
+            <button class="cb-btn set" onclick="toggleChallengeForm()">Set Challenge</button>
+            <button class="cb-btn confirm" onclick="confirmChallenge()">Mark Complete</button>
+          </div>
+          <div class="challenge-form" id="challenge-form">
+            <textarea class="challenge-input" rows="2" placeholder="Describe the challenge (e.g. 'Practise kata every morning for 14 days')"></textarea>
+            <button class="submit-btn" style="font-size:13px; padding:11px;" onclick="submitChallenge()">Confirm &amp; Notify Instructor</button>
+            <div class="success-flash" id="challenge-success">Challenge set — Harry Bovill notified</div>
+          </div>
+        </div>
+
+        <!-- Upcoming events -->
+        <div class="section-label" style="padding:0; margin-top:4px; margin-bottom:8px;">Upcoming Events</div>
+        <div class="card">
+          <div class="event-item">
+            <div class="event-date-box"><div class="event-day">28</div><div class="event-month">Mar</div></div>
+            <div><div class="event-name">Spring Grading Day</div><div class="event-detail">All levels · Northfield Dojo, 10am–1pm</div></div>
+          </div>
+          <div class="event-item">
+            <div class="event-date-box"><div class="event-day">12</div><div class="event-month">Apr</div></div>
+            <div><div class="event-name">Ninja Camp (Easter)</div><div class="event-detail">4 days · Ages 6–12 · Spaces available</div></div>
+          </div>
+          <div class="event-item">
+            <div class="event-date-box"><div class="event-day">26</div><div class="event-month">Apr</div></div>
+            <div><div class="event-name">Summer Term Starts</div><div class="event-detail">Revised timetable from 28 April</div></div>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="section-label" style="padding:0; margin-top:4px; margin-bottom:8px;">Recent Updates</div>
+        <div class="card">
+          <div class="notif-item">
+            <div class="notif-icon" style="background:var(--gold-faint);">🥋</div>
+            <div>
+              <div class="notif-title">Kai earned an Air stripe</div>
+              <div class="notif-body">Awarded by Harry Bovill in Tuesday's class</div>
+              <div class="notif-time">Today, 6:12pm</div>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-icon" style="background:var(--info-bg);">📋</div>
+            <div>
+              <div class="notif-title">Attendance confirmed</div>
+              <div class="notif-body">Mia attended Monday class · Harry Bovill</div>
+              <div class="notif-time">Yesterday, 4:45pm</div>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-icon" style="background:var(--success-bg);">✓</div>
+            <div>
+              <div class="notif-title">Payment processed</div>
+              <div class="notif-body">£95.00 — Spring Term · Both students</div>
+              <div class="notif-time">14 Mar</div>
+            </div>
+          </div>
+        </div>
+        <div style="height:20px;"></div>
+      </div>
+    </div>
+
+    <div class="bottom-nav" id="nav-home">
+      <div class="nav-item active" onclick="goHome()">
+        <div class="nav-icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><path d="M3 9L11 3L19 9V19H14V14H8V19H3V9Z" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="nav-label" style="color:var(--gold);">Home</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('screen-attendance')">
+        <div class="nav-icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M11 7V11L14 13"/></svg>
+          <div class="nav-badge">2</div>
+        </div>
+        <span class="nav-label">Attendance</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('screen-family')">
+        <div class="nav-icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><circle cx="11" cy="7" r="3"/><path d="M5 19C5 16.2 7.7 14 11 14C14.3 14 17 16.2 17 19"/><circle cx="17" cy="8" r="2"/><path d="M19 18C19 16.3 18.1 15 17 15"/></svg>
+        </div>
+        <span class="nav-label">Family</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('screen-billing')">
+        <div class="nav-icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><rect x="2" y="5" width="18" height="13" rx="2"/><path d="M2 9H20"/><path d="M6 14H10"/></svg>
+        </div>
+        <span class="nav-label">Billing</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('screen-shop')">
+        <div class="nav-icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><path d="M3 3H5L7 15H17L19 7H6"/><circle cx="9" cy="19" r="1"/><circle cx="16" cy="19" r="1"/></svg>
+        </div>
+        <span class="nav-label">Shop</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== ATTENDANCE SCREEN =================== -->
+  <div class="screen" id="screen-attendance">
+    <div class="status-bar dark"><span>9:41</span><div class="status-icons"></div></div>
+    <div class="attendance-header">
+      <div class="page-header" style="padding-top:8px; padding-bottom:14px;">
+        <div class="header-eyebrow">Today · Wednesday, 25 March</div>
+        <div class="header-title light">Attendance</div>
+        <div class="header-sub light">Let your instructor know before class</div>
+      </div>
+
+      <!-- Kai's class today -->
+      <div style="padding: 0 20px 4px;">
+        <div class="class-today-card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div class="class-today-name">Kai · Junior Ninjas</div>
+              <div class="class-today-time">Thursday 5:00pm — 6:00pm · Harry Bovill</div>
+            </div>
+            <div style="font-size:11px; color:rgba(255,255,255,0.35); margin-top:2px;">Tomorrow</div>
+          </div>
+          <div class="attendance-actions">
+            <button class="att-btn attend" id="kai-attend" onclick="selectAtt('kai','attend')">✓ Attending</button>
+            <button class="att-btn absent" id="kai-absent" onclick="selectAtt('kai','absent')">✗ Absent</button>
+            <button class="att-btn late" id="kai-late" onclick="selectAtt('kai','late')">⧗ Late</button>
+          </div>
+          <div class="confirm-banner" id="kai-confirm"></div>
+        </div>
+
+        <!-- Mia's class today -->
+        <div class="class-today-card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div class="class-today-name">Mia · Mini Ninjas</div>
+              <div class="class-today-time">Today 4:00pm — 5:00pm · Harry Bovill</div>
+            </div>
+            <div style="background:rgba(196,32,32,0.30); color:#FF8888; font-size:10px; font-weight:700; padding:3px 7px; border-radius:10px;">Today</div>
+          </div>
+          <div class="attendance-actions">
+            <button class="att-btn attend" id="mia-attend" onclick="selectAtt('mia','attend')">✓ Attending</button>
+            <button class="att-btn absent" id="mia-absent" onclick="selectAtt('mia','absent')">✗ Absent</button>
+            <button class="att-btn late" id="mia-late" onclick="selectAtt('mia','late')">⧗ Late</button>
+          </div>
+          <div class="confirm-banner" id="mia-confirm"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchAttTab('upcoming', this)">Upcoming</div>
+      <div class="tab" onclick="switchAttTab('makeup', this)">Make-Up Classes</div>
+      <div class="tab" onclick="switchAttTab('history', this)">History</div>
+    </div>
+
+    <div class="scroll-area">
+      <div class="px20">
+
+        <!-- UPCOMING TAB -->
+        <div class="tab-content active" id="tab-upcoming">
+          <div class="row-spacer"></div>
+          <div class="section-label" style="padding:0; margin-bottom:8px;">This Week's Classes</div>
+          <div class="card">
+            <div class="event-item">
+              <div class="event-date-box"><div class="event-day">25</div><div class="event-month">Mar</div></div>
+              <div style="flex:1;">
+                <div class="event-name">Mia · Mini Ninjas</div>
+                <div class="event-detail">Today · 4:00pm · Northfield Dojo</div>
+              </div>
+              <span class="status-pill status-active">Confirmed</span>
+            </div>
+            <div class="event-item">
+              <div class="event-date-box"><div class="event-day">26</div><div class="event-month">Mar</div></div>
+              <div style="flex:1;">
+                <div class="event-name">Mia · Mini Ninjas</div>
+                <div class="event-detail">Thu · 4:00pm · Northfield Dojo</div>
+              </div>
+              <span class="status-pill" style="background:var(--fog); color:var(--ash);">Pending</span>
+            </div>
+            <div class="event-item">
+              <div class="event-date-box"><div class="event-day">27</div><div class="event-month">Mar</div></div>
+              <div style="flex:1;">
+                <div class="event-name">Kai · Junior Ninjas</div>
+                <div class="event-detail">Thu · 5:00pm · Northfield Dojo</div>
+              </div>
+              <span class="status-pill" style="background:var(--fog); color:var(--ash);">Pending</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAKEUP TAB -->
+        <div class="tab-content" id="tab-makeup">
+          <div class="row-spacer"></div>
+
+          <div class="makeup-info-box">
+            <div class="makeup-count-row">
+              <span class="makeup-label">Kai — Make-Up Classes Included</span>
+              <div class="makeup-pips">
+                <div class="makeup-pip used"></div>
+                <div class="makeup-pip used"></div>
+                <div class="makeup-pip available"></div>
+                <div class="makeup-pip available"></div>
+              </div>
+            </div>
+            <div class="makeup-note">4 make-up classes included each term · 2 available · Report an absence before class starts to unlock a make-up slot.</div>
+          </div>
+
+          <div class="makeup-info-box" style="background:var(--warn-bg); border-color:rgba(200,149,26,0.25);">
+            <div class="makeup-count-row">
+              <span class="makeup-label" style="color:var(--warn);">Mia — Make-Up Classes Included</span>
+              <div class="makeup-pips">
+                <div class="makeup-pip used" style="border-color:var(--warn); background:var(--warn);"></div>
+                <div class="makeup-pip used" style="border-color:var(--warn); background:var(--warn);"></div>
+                <div class="makeup-pip used" style="border-color:var(--warn); background:var(--warn);"></div>
+                <div class="makeup-pip available" style="border-color:var(--warn);"></div>
+              </div>
+            </div>
+            <div class="makeup-note" style="color:var(--warn);">4 included this term · 1 still available — use it before term ends.</div>
+          </div>
+
+          <div class="section-label" style="padding:0; margin-bottom:6px;">Book a Make-Up for Kai</div>
+          <p style="font-size:12px; color:var(--ash); margin-bottom:10px; line-height:1.5;">Choose any age-appropriate class below — only classes with space are shown.</p>
+
+          <div class="class-option" id="mu-opt-1" onclick="selectMakeup('mu-opt-1')">
+            <div>
+              <div class="class-option-name">Junior Ninjas (Tue 5pm)</div>
+              <div class="class-option-meta">25 students · 2 make-up spaces available</div>
+            </div>
+            <span class="class-spaces">2 free</span>
+          </div>
+          <div class="class-option" id="mu-opt-2" onclick="selectMakeup('mu-opt-2')">
+            <div>
+              <div class="class-option-name">Junior Ninjas (Sat 10am)</div>
+              <div class="class-option-meta">18 students · 2 make-up spaces available</div>
+            </div>
+            <span class="class-spaces">2 free</span>
+          </div>
+          <div class="class-option" id="mu-opt-3" onclick="selectMakeup('mu-opt-3')">
+            <div>
+              <div class="class-option-name">Intermediate (Thu 6pm)</div>
+              <div class="class-option-meta">27 students · 1 make-up space · Almost full</div>
+            </div>
+            <span class="class-spaces tight">1 free</span>
+          </div>
+
+          <button class="submit-btn" id="makeup-confirm-btn" onclick="confirmMakeup()" disabled>Confirm Make-Up Class</button>
+          <div class="confirm-banner" id="makeup-confirm-result"></div>
+        </div>
+
+        <!-- HISTORY TAB -->
+        <div class="tab-content" id="tab-history">
+          <div class="row-spacer"></div>
+          <div class="section-label" style="padding:0; margin-bottom:8px;">March 2026</div>
+          <div class="card">
+            <div class="billing-row">
+              <div><div class="billing-name">Kai · Junior Ninjas</div><div class="billing-plan">Tue 18 Mar</div></div>
+              <span class="status-pill status-active">Present</span>
+            </div>
+            <div class="billing-row">
+              <div><div class="billing-name">Mia · Mini Ninjas</div><div class="billing-plan">Mon 17 Mar</div></div>
+              <span class="status-pill status-active">Present</span>
+            </div>
+            <div class="billing-row">
+              <div><div class="billing-name">Kai · Junior Ninjas</div><div class="billing-plan">Thu 13 Mar</div></div>
+              <span class="status-pill status-active">Present</span>
+            </div>
+            <div class="billing-row">
+              <div><div class="billing-name">Mia · Mini Ninjas</div><div class="billing-plan">Wed 12 Mar</div></div>
+              <span class="status-pill status-inactive">Make-Up</span>
+            </div>
+            <div class="billing-row">
+              <div><div class="billing-name">Kai · Junior Ninjas</div><div class="billing-plan">Tue 11 Mar</div></div>
+              <span class="status-pill" style="background:var(--fog); color:var(--ash);">Absent</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:20px;"></div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goHome()"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><path d="M3 9L11 3L19 9V19H14V14H8V19H3V9Z" stroke-linejoin="round"/></svg></div><span class="nav-label">Home</span></div>
+      <div class="nav-item active"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M11 7V11L14 13"/></svg></div><span class="nav-label" style="color:var(--gold);">Attendance</span></div>
+      <div class="nav-item" onclick="showScreen('screen-family')"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><circle cx="11" cy="7" r="3"/><path d="M5 19C5 16.2 7.7 14 11 14C14.3 14 17 16.2 17 19"/><circle cx="17" cy="8" r="2"/><path d="M19 18C19 16.3 18.1 15 17 15"/></svg></div><span class="nav-label">Family</span></div>
+      <div class="nav-item" onclick="showScreen('screen-billing')"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><rect x="2" y="5" width="18" height="13" rx="2"/><path d="M2 9H20"/><path d="M6 14H10"/></svg></div><span class="nav-label">Billing</span></div>
+      <div class="nav-item" onclick="showScreen('screen-shop')"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><path d="M3 3H5L7 15H17L19 7H6"/><circle cx="9" cy="19" r="1"/><circle cx="16" cy="19" r="1"/></svg></div><span class="nav-label">Shop</span></div>
+    </div>
+  </div>
+
+  <!-- =================== FAMILY ACCOUNT SCREEN =================== -->
+  <div class="screen" id="screen-family">
+    <div class="status-bar light"><span>9:41</span><div class="status-icons"></div></div>
+
+    <div class="page-header">
+      <div class="header-eyebrow">Account</div>
+      <div class="header-title">Family Account</div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchFamTab('students', this)">Students</div>
+      <div class="tab" onclick="switchFamTab('account', this)">Account</div>
+      <div class="tab" onclick="switchFamTab('transfer', this)">Class Transfer</div>
+    </div>
+
+    <div class="scroll-area">
+      <div class="px20">
+
+        <!-- STUDENTS TAB -->
+        <div class="tab-content active" id="fam-tab-students">
+          <div class="row-spacer"></div>
+
+          <div class="student-manage-item">
+            <div class="soc-avatar" style="width:40px;height:40px;background:#F0C830;font-size:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:700;color:var(--ink);flex-shrink:0;">K</div>
+            <div class="smi-info">
+              <div class="smi-name">Kai Gunn · Age 9</div>
+              <div class="smi-detail">Honoo Belt · Tue & Thu 5pm · Monthly Rolling</div>
+            </div>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div class="action-row" style="margin-top:-2px; margin-bottom:14px;">
+            <button class="action-btn" onclick="showStudentProfile('kai')">View Profile</button>
+            <button class="action-btn danger" onclick="confirmPause('Kai')">Pause</button>
+          </div>
+
+          <div class="student-manage-item">
+            <div class="soc-avatar" style="width:40px;height:40px;background:#A8D8F0;font-size:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:700;color:var(--ink);flex-shrink:0;">M</div>
+            <div class="smi-info">
+              <div class="smi-name">Mia Gunn · Age 7</div>
+              <div class="smi-detail">Taiyo Belt · Mon & Wed 4pm · Monthly Rolling</div>
+            </div>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div class="action-row" style="margin-top:-2px; margin-bottom:14px;">
+            <button class="action-btn" onclick="showStudentProfile('mia')">View Profile</button>
+            <button class="action-btn danger" onclick="confirmPause('Mia')">Pause</button>
+          </div>
+
+          <button class="add-student-btn" onclick="showAddStudent()">+ Add New Student</button>
+
+          <div class="card" id="add-student-form" style="display:none;">
+            <div style="font-size:14px; font-weight:700; color:var(--ink); margin-bottom:12px;">New Student</div>
+            <span class="inline-label">Full Name</span>
+            <input type="text" placeholder="Student's full name" style="width:100%;padding:10px 12px;border:1px solid var(--fog);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:10px;outline:none;">
+            <span class="inline-label">Date of Birth</span>
+            <input type="date" style="width:100%;padding:10px 12px;border:1px solid var(--fog);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:10px;outline:none;">
+            <span class="inline-label">Preferred Class</span>
+            <select style="width:100%;padding:10px 12px;border:1px solid var(--fog);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:12px;outline:none;background:white;">
+              <option>Mini Ninjas (Mon 4pm)</option>
+              <option>Mini Ninjas (Wed 4pm)</option>
+              <option>Junior Ninjas (Tue 5pm)</option>
+              <option>Junior Ninjas (Thu 5pm)</option>
+            </select>
+            <div class="card" style="background:var(--warn-bg);border-color:rgba(200,149,26,0.25);padding:10px;margin-bottom:12px;">
+              <div style="font-size:12px;color:var(--warn);font-weight:500;line-height:1.4;">A consent form will be sent to all registered guardians before this student account is activated. No student record will go live until consent is signed by all guardians.</div>
+            </div>
+            <button class="submit-btn" onclick="submitNewStudent()">Request Enrolment</button>
+            <div class="success-flash" id="enrol-success">Enrolment request sent — We'll be in touch</div>
+          </div>
+        </div>
+
+        <!-- ACCOUNT TAB -->
+        <div class="tab-content" id="fam-tab-account">
+          <div class="row-spacer"></div>
+          <div class="section-label" style="padding:0; margin-bottom:8px;">Account Holders</div>
+          <div class="family-avatar-row">
+            <div class="family-member-chip">
+              <div class="fm-avatar" style="background:#D4F0B8; color:var(--green-belt);">JG</div>
+              <div><div class="fm-name">John Gunn</div><div class="fm-role">Primary Guardian</div></div>
+            </div>
+            <div class="family-member-chip">
+              <div class="fm-avatar" style="background:#E6F1FB; color:var(--info);">SG</div>
+              <div><div class="fm-name">Sarah Gunn</div><div class="fm-role">Guardian</div></div>
+            </div>
+          </div>
+
+          <div class="section-label" style="padding:0; margin-top:8px; margin-bottom:8px;">Contact Details</div>
+          <div class="card">
+            <div class="billing-row">
+              <div class="billing-plan">Email</div>
+              <div class="billing-name" style="font-size:13px;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="52383d3a3c1235273c3c7c313d7c2739">[email&#160;protected]</a></div>
+            </div>
+            <div class="billing-row">
+              <div class="billing-plan">Phone</div>
+              <div class="billing-name" style="font-size:13px;">07700 900 123</div>
+            </div>
+            <div class="billing-row">
+              <div class="billing-plan">Emergency Contact</div>
+              <div class="billing-name" style="font-size:13px;">Sarah Gunn</div>
+            </div>
+            <div class="billing-row" style="border-bottom:none;">
+              <div class="billing-plan">Notifications</div>
+              <div style="font-size:13px;font-weight:600;color:var(--success);">Push + Email</div>
+            </div>
+          </div>
+
+          <div class="section-label" style="padding:0; margin-top:8px; margin-bottom:8px;">Consent & Documents</div>
+          <div class="card">
+            <div class="billing-row">
+              <div><div class="billing-name">Data Consent</div><div class="billing-plan">Signed 1 Sep 2024</div></div>
+              <span class="status-pill status-active">Signed</span>
+            </div>
+            <div class="billing-row">
+              <div><div class="billing-name">Photo Permission</div><div class="billing-plan">Signed 1 Sep 2024</div></div>
+              <span class="status-pill status-active">Signed</span>
+            </div>
+            <div class="billing-row" style="border-bottom:none;">
+              <div><div class="billing-name">Medical Information</div><div class="billing-plan">Last updated Jan 2025</div></div>
+              <button class="action-btn" style="max-width:70px;font-size:11px;">Edit</button>
+            </div>
+          </div>
+
+          <div class="action-row" style="margin-top:8px;">
+            <button class="action-btn">Edit Details</button>
+            <button class="action-btn">Change Passcode</button>
+          </div>
+        </div>
+
+        <!-- TRANSFER TAB -->
+        <div class="tab-content" id="fam-tab-transfer">
+          <div class="row-spacer"></div>
+          <div class="transfer-panel">
+            <div class="transfer-title">Request a Class Transfer</div>
+            <p style="font-size:12px;color:var(--info);margin-bottom:10px;line-height:1.5;">You can request a transfer to another age-appropriate class. Transfers are subject to instructor approval and available space. Your lead instructor will be notified immediately.</p>
+
+            <span class="inline-label" style="color:var(--info);">Student</span>
+            <select id="transfer-student" style="width:100%;padding:10px;border:1px solid rgba(24,95,165,0.30);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;margin-bottom:10px;background:white;outline:none;" onchange="updateTransferOptions()">
+              <option value="">Select student…</option>
+              <option value="kai">Kai Gunn (Age 9)</option>
+              <option value="mia">Mia Gunn (Age 7)</option>
+            </select>
+
+            <div id="transfer-options" style="display:none;">
+              <span class="inline-label" style="color:var(--info);">Available Classes</span>
+              <div id="transfer-class-list"></div>
+              <span class="inline-label" style="color:var(--info);margin-top:8px;">Reason (optional)</span>
+              <textarea style="width:100%;padding:10px;border:1px solid rgba(24,95,165,0.30);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;margin-bottom:10px;background:white;outline:none;resize:none;" rows="2" placeholder="e.g. Schedule change, different age group…"></textarea>
+              <button class="submit-btn" onclick="submitTransfer()">Request Transfer — Notify Instructor</button>
+              <div class="success-flash" id="transfer-success">Transfer request sent to Harry Bovill</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:20px;"></div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goHome()"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><path d="M3 9L11 3L19 9V19H14V14H8V19H3V9Z" stroke-linejoin="round"/></svg></div><span class="nav-label">Home</span></div>
+      <div class="nav-item" onclick="showScreen('screen-attendance')"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M11 7V11L14 13"/></svg><div class="nav-badge">2</div></div><span class="nav-label">Attendance</span></div>
+      <div class="nav-item active"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><circle cx="11" cy="7" r="3"/><path d="M5 19C5 16.2 7.7 14 11 14C14.3 14 17 16.2 17 19"/><circle cx="17" cy="8" r="2"/><path d="M19 18C19 16.3 18.1 15 17 15"/></svg></div><span class="nav-label" style="color:var(--gold);">Family</span></div>
+      <div class="nav-item" onclick="showScreen('screen-billing')"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><rect x="2" y="5" width="18" height="13" rx="2"/><path d="M2 9H20"/><path d="M6 14H10"/></svg></div><span class="nav-label">Billing</span></div>
+      <div class="nav-item" onclick="showScreen('screen-shop')"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><path d="M3 3H5L7 15H17L19 7H6"/><circle cx="9" cy="19" r="1"/><circle cx="16" cy="19" r="1"/></svg></div><span class="nav-label">Shop</span></div>
+    </div>
+  </div>
+
+  <!-- =================== BILLING SCREEN =================== -->
+  <div class="screen" id="screen-billing">
+    <div class="status-bar light"><span>9:41</span><div class="status-icons"></div></div>
+    <div class="page-header">
+      <div class="header-eyebrow">Membership</div>
+      <div class="header-title">Billing</div>
+    </div>
+
+    <div class="scroll-area">
+      <div class="px20">
+        <div class="billing-total-card">
+          <div class="billing-total-label">MONTHLY TOTAL</div>
+          <div class="billing-total-amount">£114.99</div>
+          <div class="billing-total-period">Next payment: 1 April 2026</div>
+        </div>
+
+        <div class="section-label" style="padding:0; margin-bottom:8px;">Per Student Breakdown</div>
+        <div class="card">
+          <div class="billing-row">
+            <div>
+              <div class="billing-name">Kai Gunn</div>
+              <div class="billing-plan">Monthly Rolling · 2 classes/week</div>
+            </div>
+            <div class="billing-amount">£65.00</div>
+          </div>
+          <div class="billing-row" style="border-bottom:none;">
+            <div>
+              <div class="billing-name">Mia Gunn</div>
+              <div class="billing-plan">Monthly Rolling · 1 class/week</div>
+            </div>
+            <div class="billing-amount">£49.99</div>
+          </div>
+        </div>
+
+        <div class="membership-action-row">
+          <button class="mem-btn upgrade" onclick="showBillingAction('upgrade')">Upgrade</button>
+          <button class="mem-btn" onclick="showBillingAction('pause')">Pause</button>
+          <button class="mem-btn cancel" onclick="showBillingAction('cancel')">Cancel</button>
+        </div>
+
+        <div class="card" id="billing-action-panel" style="display:none; margin-top:4px;">
+          <div id="billing-action-content"></div>
+        </div>
+
+        <div class="section-label" style="padding:0; margin-top:12px; margin-bottom:8px;">Payment History</div>
+        <div class="card">
+          <div class="billing-row">
+            <div><div class="billing-name">Monthly Payment</div><div class="billing-plan">1 Mar 2026 · Visa •••• 4411</div></div>
+            <div class="billing-amount">£114.99</div>
+          </div>
+          <div class="billing-row">
+            <div><div class="billing-name">Monthly Payment</div><div class="billing-plan">1 Feb 2026 · Visa •••• 4411</div></div>
+            <div class="billing-amount">£114.99</div>
+          </div>
+          <div class="billing-row" style="border-bottom:none;">
+            <div><div class="billing-name">Monthly Payment</div><div class="billing-plan">1 Jan 2026 · Visa •••• 4411</div></div>
+            <div class="billing-amount">£114.99</div>
+          </div>
+        </div>
+
+        <div class="section-label" style="padding:0; margin-top:8px; margin-bottom:8px;">Payment Method</div>
+        <div class="card">
+          <div class="billing-row" style="border-bottom:none;">
+            <div><div class="billing-name">Visa ending 4411</div><div class="billing-plan">Expires 09/27</div></div>
+            <button class="action-btn" style="max-width:70px;font-size:11px;">Update</button>
+          </div>
+        </div>
+
+        <div style="height:20px;"></div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goHome()"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><path d="M3 9L11 3L19 9V19H14V14H8V19H3V9Z" stroke-linejoin="round"/></svg></div><span class="nav-label">Home</span></div>
+      <div class="nav-item" onclick="showScreen('screen-attendance')"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M11 7V11L14 13"/></svg><div class="nav-badge">2</div></div><span class="nav-label">Attendance</span></div>
+      <div class="nav-item" onclick="showScreen('screen-family')"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><circle cx="11" cy="7" r="3"/><path d="M5 19C5 16.2 7.7 14 11 14C14.3 14 17 16.2 17 19"/><circle cx="17" cy="8" r="2"/><path d="M19 18C19 16.3 18.1 15 17 15"/></svg></div><span class="nav-label">Family</span></div>
+      <div class="nav-item active"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><rect x="2" y="5" width="18" height="13" rx="2"/><path d="M2 9H20"/><path d="M6 14H10"/></svg></div><span class="nav-label" style="color:var(--gold);">Billing</span></div>
+      <div class="nav-item" onclick="showScreen('screen-shop')"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><path d="M3 3H5L7 15H17L19 7H6"/><circle cx="9" cy="19" r="1"/><circle cx="16" cy="19" r="1"/></svg></div><span class="nav-label">Shop</span></div>
+    </div>
+  </div>
+
+  <!-- =================== SHOP SCREEN =================== -->
+  <div class="screen" id="screen-shop">
+    <div class="status-bar light"><span>9:41</span><div class="status-icons"></div></div>
+    <div class="page-header">
+      <div class="header-eyebrow">Ninja School</div>
+      <div class="header-title">Shop</div>
+      <div class="header-sub">Merch, Camps &amp; Resources</div>
+    </div>
+
+    <div class="shop-categories">
+      <div class="cat-chip active" onclick="filterShop('all', this)">All</div>
+      <div class="cat-chip" onclick="filterShop('merch', this)">Merch</div>
+      <div class="cat-chip" onclick="filterShop('camps', this)">Camps</div>
+      <div class="cat-chip" onclick="filterShop('residencies', this)">Residencies</div>
+      <div class="cat-chip" onclick="filterShop('learning', this)">Learning</div>
+    </div>
+
+    <div class="scroll-area">
+      <div class="px20">
+        <div class="shop-grid">
+          <div class="shop-item" data-cat="merch">
+            <div class="shop-item-img" style="background:#F7F4EC;">🥋</div>
+            <div class="shop-item-body">
+              <div class="shop-item-name">Ninja Gi</div>
+              <div class="shop-item-desc">Official uniform, sizes 4–16</div>
+              <div class="shop-item-price">£45.00</div>
+              <button class="shop-item-cta">Add to basket</button>
+            </div>
+          </div>
+          <div class="shop-item" data-cat="merch">
+            <div class="shop-item-img" style="background:#F0F0F0;">🩺</div>
+            <div class="shop-item-body">
+              <div class="shop-item-name">Ninja Kit Bag</div>
+              <div class="shop-item-desc">Embroidered logo, navy</div>
+              <div class="shop-item-price">£28.00</div>
+              <button class="shop-item-cta">Add to basket</button>
+            </div>
+          </div>
+          <div class="shop-item" data-cat="camps">
+            <div class="shop-item-img" style="background:#EAF3DE;">⛺</div>
+            <div class="shop-item-body">
+              <div class="shop-item-name">Easter Camp</div>
+              <div class="shop-item-desc">12–15 Apr · Ages 6–12 · 4 days</div>
+              <div class="shop-item-price">£120.00</div>
+              <button class="shop-item-cta">Book Now</button>
+            </div>
+          </div>
+          <div class="shop-item" data-cat="camps">
+            <div class="shop-item-img" style="background:#E6F1FB;">🏖</div>
+            <div class="shop-item-body">
+              <div class="shop-item-name">Summer Camp</div>
+              <div class="shop-item-desc">28 Jul–1 Aug · Ages 7–14</div>
+              <div class="shop-item-price">£150.00</div>
+              <button class="shop-item-cta">Book Now</button>
+            </div>
+          </div>
+          <div class="shop-item" data-cat="residencies">
+            <div class="shop-item-img" style="background:#FDF5E0;">🏯</div>
+            <div class="shop-item-body">
+              <div class="shop-item-name">Ninja Residency</div>
+              <div class="shop-item-desc">Weekend intensive · Oct 2026</div>
+              <div class="shop-item-price">£220.00</div>
+              <button class="shop-item-cta">Register Interest</button>
+            </div>
+          </div>
+          <div class="shop-item" data-cat="learning">
+            <div class="shop-item-img" style="background:#FBEAF0;">📚</div>
+            <div class="shop-item-body">
+              <div class="shop-item-name">Technique Cards</div>
+              <div class="shop-item-desc">Illustrated technique library set</div>
+              <div class="shop-item-price">£18.00</div>
+              <button class="shop-item-cta">Add to basket</button>
+            </div>
+          </div>
+          <div class="shop-item" data-cat="merch">
+            <div class="shop-item-img" style="background:#F7F4EC;">⭐</div>
+            <div class="shop-item-body">
+              <div class="shop-item-name">Belt Display Frame</div>
+              <div class="shop-item-desc">Shadow box, holds 11 belts</div>
+              <div class="shop-item-price">£35.00</div>
+              <button class="shop-item-cta">Add to basket</button>
+            </div>
+          </div>
+          <div class="shop-item" data-cat="learning">
+            <div class="shop-item-img" style="background:#EAF3DE;">🎥</div>
+            <div class="shop-item-body">
+              <div class="shop-item-name">Video Library</div>
+              <div class="shop-item-desc">Term access · All technique videos</div>
+              <div class="shop-item-price">£12.00</div>
+              <button class="shop-item-cta">Subscribe</button>
+            </div>
+          </div>
+        </div>
+        <div style="height:20px;"></div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goHome()"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><path d="M3 9L11 3L19 9V19H14V14H8V19H3V9Z" stroke-linejoin="round"/></svg></div><span class="nav-label">Home</span></div>
+      <div class="nav-item" onclick="showScreen('screen-attendance')"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M11 7V11L14 13"/></svg><div class="nav-badge">2</div></div><span class="nav-label">Attendance</span></div>
+      <div class="nav-item" onclick="showScreen('screen-family')"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><circle cx="11" cy="7" r="3"/><path d="M5 19C5 16.2 7.7 14 11 14C14.3 14 17 16.2 17 19"/><circle cx="17" cy="8" r="2"/><path d="M19 18C19 16.3 18.1 15 17 15"/></svg></div><span class="nav-label">Family</span></div>
+      <div class="nav-item" onclick="showScreen('screen-billing')"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><rect x="2" y="5" width="18" height="13" rx="2"/><path d="M2 9H20"/><path d="M6 14H10"/></svg></div><span class="nav-label">Billing</span></div>
+      <div class="nav-item active"><div class="nav-icon-wrap"><svg viewBox="0 0 22 22" fill="none" stroke-width="1.5"><path d="M3 3H5L7 15H17L19 7H6"/><circle cx="9" cy="19" r="1"/><circle cx="16" cy="19" r="1"/></svg></div><span class="nav-label" style="color:var(--gold);">Shop</span></div>
+    </div>
+  </div>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ===== STATE =====
+let passcodeEntry = [];
+const CORRECT_PASSCODE = [1,2,3,4];
+
+// ===== NAVIGATION =====
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goHome() { showScreen('screen-home'); }
+
+function goToStudentFromLock(name) {
+  window.location.href = 'NinjaLearning_Student.html?student=' + name;
+}
+
+function showStudentProfile(name) {
+  window.location.href = 'NinjaLearning_Student.html?student=' + name;
+}
+
+// ===== PASSCODE =====
+function openPasscode() {
+  passcodeEntry = [];
+  updateDots();
+  document.getElementById('passcode-overlay').classList.add('open');
+}
+
+function closePasscode() {
+  passcodeEntry = [];
+  updateDots();
+  document.getElementById('passcode-overlay').classList.remove('open');
+}
+
+function enterDigit(d) {
+  if (passcodeEntry.length >= 4) return;
+  passcodeEntry.push(d);
+  updateDots();
+  if (passcodeEntry.length === 4) {
+    setTimeout(checkPasscode, 200);
+  }
+}
+
+function deleteDigit() {
+  passcodeEntry.pop();
+  updateDots();
+}
+
+function updateDots() {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('dot-' + i);
+    dot.classList.remove('filled', 'error');
+    if (i < passcodeEntry.length) dot.classList.add('filled');
+  }
+}
+
+function checkPasscode() {
+  const correct = passcodeEntry.every((d, i) => d === CORRECT_PASSCODE[i]);
+  if (correct) {
+    closePasscode();
+    showScreen('screen-home');
+  } else {
+    for (let i = 0; i < 4; i++) {
+      document.getElementById('dot-' + i).classList.replace('filled', 'error');
+    }
+    setTimeout(() => {
+      passcodeEntry = [];
+      updateDots();
+    }, 700);
+  }
+}
+
+// ===== ATTENDANCE =====
+function selectAtt(student, type) {
+  ['attend','absent','late'].forEach(t => {
+    const btn = document.getElementById(student + '-' + t);
+    btn.classList.remove('selected-attend','selected-absent','selected-late');
+  });
+  document.getElementById(student + '-' + type).classList.add('selected-' + type);
+
+  const confirm = document.getElementById(student + '-confirm');
+  const now = new Date();
+  const classHour = student === 'mia' ? 16 : 17;
+  const minsUntilClass = (classHour * 60) - (now.getHours() * 60 + now.getMinutes());
+  const qualifiesForMakeup = minsUntilClass > 120;
+
+  let msg = '';
+  if (type === 'attend') {
+    msg = '✓ Confirmed — Harry Bovill notified';
+  } else if (type === 'late') {
+    msg = '⧗ Running late — Harry Bovill notified';
+  } else if (type === 'absent') {
+    if (qualifiesForMakeup) {
+      msg = '✓ Absence reported — a make-up class is available to book this term';
+    } else {
+      msg = 'Absence noted. Make-up classes are available when reported before class starts — book one next time';
+    }
+  }
+  confirm.textContent = msg;
+  confirm.classList.add('show');
+}
+
+// Attendance tabs
+function switchAttTab(name, el) {
+  document.querySelectorAll('#screen-attendance .tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#screen-attendance .tab-content').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// Makeup class
+let selectedMakeup = null;
+function selectMakeup(id) {
+  document.querySelectorAll('.class-option').forEach(o => o.classList.remove('selected-class'));
+  document.getElementById(id).classList.add('selected-class');
+  selectedMakeup = id;
+  document.getElementById('makeup-confirm-btn').disabled = false;
+}
+
+function confirmMakeup() {
+  const names = { 'mu-opt-1': 'Junior Ninjas (Tue 5pm)', 'mu-opt-2': 'Junior Ninjas (Sat 10am)', 'mu-opt-3': 'Intermediate (Thu 6pm)' };
+  const result = document.getElementById('makeup-confirm-result');
+  result.textContent = '✓ Make-up class booked for ' + (names[selectedMakeup] || 'selected class') + ' — Instructor notified';
+  result.classList.add('show');
+  document.getElementById('makeup-confirm-btn').disabled = true;
+}
+
+// ===== BELL / NOTIFICATIONS =====
+function openNotifPanel() {
+  document.getElementById('notif-panel').classList.add('open');
+}
+function closeNotifPanel() {
+  document.getElementById('notif-panel').classList.remove('open');
+}
+function filterNotif(cat, el) {
+  document.querySelectorAll('.notif-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.notif-row').forEach(row => {
+    row.style.display = (cat === 'all' || row.dataset.cat === cat) ? 'flex' : 'none';
+  });
+}
+
+// ===== CHALLENGE =====
+function toggleChallengeForm() {
+  const form = document.getElementById('challenge-form');
+  form.classList.toggle('open');
+}
+
+function submitChallenge() {
+  document.getElementById('challenge-success').classList.add('show');
+  // After a beat, dismiss the banner and clear the bell badge
+  setTimeout(() => {
+    const banner = document.getElementById('challenge-banner');
+    banner.style.opacity = '0';
+    banner.style.transition = 'opacity 0.4s';
+    setTimeout(() => { banner.style.display = 'none'; }, 400);
+    // Clear bell badge
+    const badge = document.querySelector('.bell-badge');
+    if (badge) badge.textContent = '1';
+    // Remove unread dot from challenge notif
+    document.querySelectorAll('.notif-row[data-cat="challenge"] .unread-dot').forEach(d => d.remove());
+    document.querySelectorAll('.notif-row[data-cat="challenge"]').forEach(r => r.classList.remove('unread'));
+  }, 1400);
+}
+
+function confirmChallenge() {
+  alert('Challenge marked complete — belt promotion queued for Harry Bovill to confirm');
+}
+
+// ===== FAMILY TABS =====
+function switchFamTab(name, el) {
+  document.querySelectorAll('#screen-family .tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#screen-family .tab-content').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('fam-tab-' + name).classList.add('active');
+}
+
+function confirmPause(name) {
+  if (confirm('Pause ' + name + '\'s membership? Their place will be held for up to 8 weeks.')) {
+    alert(name + '\'s membership paused — instructor notified.');
+  }
+}
+
+function showAddStudent() {
+  const form = document.getElementById('add-student-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+function submitNewStudent() {
+  document.getElementById('enrol-success').classList.add('show');
+}
+
+function updateTransferOptions() {
+  const val = document.getElementById('transfer-student').value;
+  const panel = document.getElementById('transfer-options');
+  const list = document.getElementById('transfer-class-list');
+  if (!val) { panel.style.display = 'none'; return; }
+
+  const options = val === 'kai'
+    ? [['Junior Ninjas (Mon 5pm)', '22 students', '2 free'], ['Junior Ninjas (Sat 10am)', '18 students', '2 free']]
+    : [['Mini Ninjas (Tue 4pm)', '20 students', '2 free'], ['Mini Ninjas (Sat 9am)', '15 students', '4 free']];
+
+  list.innerHTML = options.map((o,i) => `
+    <div class="class-option" id="tr-opt-${i}" onclick="selectTransfer('tr-opt-${i}')">
+      <div><div class="class-option-name">${o[0]}</div><div class="class-option-meta">${o[1]}</div></div>
+      <span class="class-spaces">${o[2]}</span>
+    </div>
+  `).join('');
+  panel.style.display = 'block';
+}
+
+function selectTransfer(id) {
+  document.querySelectorAll('[id^="tr-opt-"]').forEach(o => o.classList.remove('selected-class'));
+  document.getElementById(id).classList.add('selected-class');
+}
+
+function submitTransfer() {
+  document.getElementById('transfer-success').classList.add('show');
+}
+
+function showAttendanceFor(name) {
+  showScreen('screen-attendance');
+}
+
+// ===== BILLING =====
+function showBillingAction(type) {
+  const panel = document.getElementById('billing-action-panel');
+  const content = document.getElementById('billing-action-content');
+  panel.style.display = 'block';
+
+  const html = {
+    upgrade: `<div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:8px;">Membership Tiers</div>
+      <div class="billing-row"><div><div class="billing-name">1 class/week</div><div class="billing-plan">£49.99/month per student</div></div><span class="status-pill status-active">Mia's plan</span></div>
+      <div class="billing-row" style="border-bottom:none;"><div><div class="billing-name">2 classes/week</div><div class="billing-plan">£65.00/month per student</div></div><span class="status-pill status-active">Kai's plan</span></div>`,
+    pause: `<div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:8px;">Pause Membership</div>
+      <p style="font-size:12px;color:var(--ash);margin-bottom:10px;line-height:1.5;">You can pause for up to 8 weeks. Your place is held. No charge while paused.</p>
+      <button class="action-btn danger" onclick="alert('Pause requested — instructor will confirm')">Request Pause</button>`,
+    cancel: `<div style="font-size:13px;font-weight:700;color:var(--danger);margin-bottom:8px;">Cancel Membership</div>
+      <p style="font-size:12px;color:var(--ash);margin-bottom:10px;line-height:1.5;">Cancellation takes effect at the end of the current billing period. Student records are retained.</p>
+      <button class="action-btn danger" onclick="alert('Cancellation requested — we\'ll be in touch')">Request Cancellation</button>`
+  };
+  content.innerHTML = html[type] || '';
+}
+
+// ===== SHOP =====
+function filterShop(cat, el) {
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const cat_val = cat;
+  document.querySelectorAll('.shop-item').forEach(item => {
+    const match = cat_val === 'all' || item.dataset.cat === cat_val;
+    item.style.display = match ? '' : 'none';
+  });
+}
+
+function renderCL() { /* class list render stub */ }
+function renderDir() { /* directory render stub */ }
+function buildSD() { /* school data stub */ }
+function buildOv() { /* overview stub */ }
+function renderHW() { /* home widget stub */ }
+</script>
+</body>
+</html>

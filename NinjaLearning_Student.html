@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Ninja Learning — Student Profile</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{
+  width:100%;height:100%;
+  overflow:hidden;
+  /* Force landscape on mobile */
+  min-height:100vw;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+  background:#061006;color:#f0f0f0;
+  font-size:16px;line-height:1.5;
+  width:100%;height:100%;
+  overflow:hidden;
+  /* Landscape enforcement */
+  display:flex;flex-direction:column;
+}
+/* ── CSS VARIABLES ── */
+:root{
+  --bg:#f4f4f0;--surf:#fff;--surf2:#f8f8f5;--bdr:#e0e0d8;--bdr2:#ccc;
+  --tx:#1a1a2e;--tx2:#555;--tx3:#999;
+  --gold:#ba7517;--gb:#FAEEDA;--gt:#633806;
+  --grn:#27500A;--gnb:#EAF3DE;--gnt:#27500A;
+  --red:#791F1F;--rb:#FCEBEB;--rt:#791F1F;
+  --blu:#0C447C;--bb:#E6F1FB;--bt:#0C447C;
+  --r:10px;--rs:6px;
+  --dk:#0c1f0c;--dk2:#091609;--dk3:#061006;
+  --gold-warm:#d4882a;--xp-fill:#5acd30;
+}
+
+/* ── FIXED LANDSCAPE SHELL ── */
+.shell{
+  position:fixed;top:0;left:0;
+  width:100vw;height:100vh;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+
+/* ── VILLAGE BG ── */
+.village-bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.v-layer{position:absolute;inset:0;width:100%;height:100%;}
+
+/* ── SCREEN SYSTEM ── */
+.scr{display:none;position:absolute;inset:0;z-index:1;}
+.scr.on{display:flex;}
+
+/* ══════════════════════════════════════════
+   PROFILE SCREEN — true landscape layout
+══════════════════════════════════════════ */
+.profile-wrap{
+  width:100%;height:100%;
+  display:flex;flex-direction:row;
+  overflow:hidden;
+}
+
+/* ── AVATAR COLUMN 38.2% ── */
+.avatar-col{
+  width:38.2%;height:100%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-end;
+  padding:0 0 3% 0;gap:8px;
+  position:relative;z-index:3;flex-shrink:0;
+}
+.avatar-fig{
+  width:52%;aspect-ratio:1/1.75;
+  background:rgba(255,255,255,0.06);
+  border:2px dashed rgba(255,255,255,0.18);border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:rgba(255,255,255,0.28);text-align:center;line-height:1.6;
+}
+.stripes-row{display:flex;gap:7px;align-items:center;}
+.belt-badge{
+  background:rgba(8,8,8,0.82);border:1px solid rgba(255,255,255,0.16);
+  border-radius:12px;padding:8px 14px;
+  display:flex;align-items:center;gap:9px;width:84%;
+}
+.belt-name{font-size:13px;color:#fff;font-weight:700;line-height:1.3;}
+.belt-tier{font-size:11px;color:rgba(255,255,255,0.42);}
+.stats-strip{display:flex;gap:6px;width:84%;}
+.stat-pip{
+  flex:1;background:rgba(8,8,8,0.7);border:1px solid rgba(255,255,255,0.12);
+  border-radius:9px;padding:6px 4px;text-align:center;
+  min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.sp-val{font-size:15px;color:#fff;font-weight:700;}
+.sp-key{font-size:10px;color:rgba(255,255,255,0.4);}
+
+/* ── RIGHT PANEL 61.8% ── */
+.right-panel{
+  flex:1;height:100%;display:flex;flex-direction:column;
+  padding:10px 16px 10px 4px;gap:8px;
+  z-index:3;min-width:0;overflow:hidden;
+}
+.demo-bar{
+  display:flex;gap:6px;background:rgba(255,255,255,0.06);
+  border-radius:8px;padding:4px;flex-shrink:0;
+}
+.demo-btn{
+  flex:1;padding:6px 8px;font-size:10px;font-weight:700;
+  border-radius:5px;border:none;background:transparent;
+  color:rgba(255,255,255,0.38);cursor:pointer;transition:all .12s;text-align:center;
+}
+.demo-btn.on{background:rgba(90,205,48,0.2);color:#a0e870;border:1px solid rgba(90,205,48,0.3);}
+.challenge-banner{
+  background:rgba(180,100,0,0.82);border:1px solid rgba(255,180,0,0.5);
+  border-radius:10px;padding:9px 12px;
+  display:flex;align-items:center;gap:8px;flex-shrink:0;min-height:44px;
+}
+.cb-dot{width:22px;height:22px;border-radius:50%;background:rgba(255,180,0,0.28);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#ffd700;flex-shrink:0;}
+.cb-txt{font-size:11px;color:#fff;line-height:1.4;flex:1;}
+.cb-days{font-size:10px;color:#ffd700;font-weight:700;}
+.top-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(8,8,8,0.68);border:1px solid rgba(255,255,255,0.11);
+  border-radius:10px;padding:8px 14px;flex-shrink:0;min-height:44px;
+}
+.student-name{font-size:16px;font-weight:700;color:#fff;}
+.level-badge{
+  background:rgba(212,136,42,0.2);border:1px solid rgba(212,136,42,0.4);
+  border-radius:20px;padding:4px 12px;font-size:11px;color:var(--gold-warm);font-weight:700;
+}
+.xp-row{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.xp-label{font-size:10px;color:rgba(255,255,255,0.38);white-space:nowrap;}
+.xp-track{flex:1;height:7px;background:rgba(255,255,255,0.12);border-radius:4px;overflow:hidden;}
+.xp-fill-bar{height:100%;border-radius:4px;}
+.activity-card{
+  background:rgba(8,8,8,0.65);border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;overflow:hidden;
+  display:flex;flex-direction:column;flex:0 0 auto;max-height:34%;flex-shrink:0;
+}
+.card-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.08);}
+.card-tab{
+  flex:1;padding:8px 0;font-size:11px;text-align:center;
+  color:rgba(255,255,255,0.35);cursor:pointer;
+  border-bottom:2px solid transparent;transition:all .15s;min-height:36px;
+}
+.card-tab.on{color:#fff;border-bottom-color:var(--xp-fill);}
+.card-body{padding:6px 10px;display:flex;flex-direction:column;gap:5px;overflow:hidden;}
+.a-row{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,0.05);border-radius:7px;
+  padding:6px 8px;min-height:34px;
+}
+.a-ico{width:20px;height:20px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.a-txt{font-size:11px;color:rgba(255,255,255,0.8);flex:1;line-height:1.3;}
+.a-meta{font-size:10px;color:rgba(255,255,255,0.38);white-space:nowrap;}
+
+/* ── NAV BUTTONS — clean, instructor-app style ── */
+.nav-cluster{
+  display:flex;justify-content:center;gap:8px;
+  margin-top:auto;padding-bottom:4px;flex-shrink:0;
+}
+.nav-btn{
+  flex:1;max-width:110px;
+  background:rgba(8,8,8,0.82);border:1.5px solid rgba(255,255,255,0.18);
+  border-radius:10px;padding:10px 8px 8px;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  cursor:pointer;transition:all .15s;min-height:60px;
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-btn:active{background:rgba(30,60,20,0.9);transform:scale(0.97);}
+.nav-btn.active-page{border-color:var(--xp-fill);background:rgba(20,55,10,0.88);}
+.nav-ico{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.nav-lbl{font-size:11px;color:rgba(255,255,255,0.72);font-weight:700;}
+.nav-btn.active-page .nav-lbl{color:#a0e870;}
+
+/* ══════════════════════════════════════════
+   SLIDE PAGES — fixed overlay
+══════════════════════════════════════════ */
+.slide-page{
+  position:fixed;inset:0;z-index:10;
+  background:var(--dk2);display:none;flex-direction:column;overflow:hidden;
+}
+.slide-page.open{display:flex;}
+.slide-header{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 18px;background:rgba(6,6,6,0.9);
+  border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;min-height:52px;
+}
+.back-btn{
+  width:36px;height:36px;min-width:36px;
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:#fff;cursor:pointer;transition:background .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.back-btn:active{background:rgba(255,255,255,0.16);}
+.slide-ico{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.slide-title{font-size:16px;font-weight:700;color:#fff;}
+.slide-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-left:auto;}
+.slide-body{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:12px;}
+.slide-body::-webkit-scrollbar{width:3px;}
+.slide-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:2px;}
+.sec-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.38);margin-bottom:6px;}
+
+/* ══════════════════════════════════════════
+   TRAINING PAGE
+══════════════════════════════════════════ */
+.training-layout{flex:1;display:flex;gap:14px;overflow:hidden;}
+.train-col-left{flex:1;display:flex;flex-direction:column;gap:10px;overflow-y:auto;}
+.train-col-left::-webkit-scrollbar{display:none;}
+.train-avatar-center{width:116px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:4px;}
+.train-col-right{flex:1;display:flex;flex-direction:column;gap:10px;overflow-y:auto;}
+.train-col-right::-webkit-scrollbar{display:none;}
+.train-avatar-fig{width:84px;aspect-ratio:1/1.7;background:rgba(255,255,255,0.06);border:2px dashed rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.25);text-align:center;}
+.train-belt-pip{width:60px;height:18px;border-radius:4px;position:relative;overflow:hidden;flex-shrink:0;}
+.train-belt-stripe{position:absolute;top:30%;left:0;right:0;height:40%;}
+.train-belt-name{font-size:10px;color:rgba(255,255,255,0.5);text-align:center;}
+.challenge-card{background:rgba(212,136,42,0.1);border:1px solid rgba(212,136,42,0.28);border-radius:12px;padding:13px 14px;display:flex;flex-direction:column;gap:8px;flex:1;}
+.ch-group-badge{display:inline-flex;align-items:center;background:rgba(212,136,42,0.22);border-radius:5px;padding:3px 9px;font-size:10px;color:var(--gold-warm);font-weight:700;}
+.ch-title{font-size:14px;font-weight:700;color:#fff;line-height:1.4;}
+.ch-desc{font-size:11px;color:rgba(255,255,255,0.5);line-height:1.6;}
+.ch-prog-row{display:flex;justify-content:space-between;margin-bottom:4px;}
+.ch-prog-lbl{font-size:10px;color:rgba(255,255,255,0.35);}
+.ch-prog-val{font-size:10px;color:var(--gold-warm);font-weight:700;}
+.ch-prog-track{height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;}
+.ch-prog-fill{height:100%;background:var(--gold-warm);border-radius:3px;}
+.ch-days{font-size:10px;color:rgba(212,136,42,0.65);text-align:right;margin-top:3px;}
+.upcoming-item{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;min-height:44px;}
+.up-name{font-size:13px;font-weight:700;color:#fff;}
+.up-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;}
+.up-days{font-size:12px;font-weight:700;color:#5acd30;}
+.dailies-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;flex:1;}
+.daily-row{display:flex;align-items:center;gap:10px;min-height:44px;}
+.daily-ico{width:34px;height:34px;border-radius:9px;background:rgba(90,205,48,0.15);border:1px solid rgba(90,205,48,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.daily-name{font-size:12px;font-weight:700;color:#fff;}
+.daily-rep{font-size:10px;color:rgba(255,255,255,0.42);margin-top:1px;}
+.daily-dots{display:flex;gap:4px;margin-top:4px;}
+.d-dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.1);}
+.d-dot.done{background:#5acd30;}
+.d-dot.today{background:var(--gold-warm);}
+.d-sep{height:.5px;background:rgba(255,255,255,0.07);}
+
+/* ══════════════════════════════════════════
+   TECHNIQUES PAGE
+══════════════════════════════════════════ */
+.tech-cats{display:flex;gap:6px;flex-shrink:0;}
+.tech-cat{flex:1;padding:8px 0;text-align:center;font-size:11px;font-weight:700;border-radius:9px;cursor:pointer;min-height:38px;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);background:rgba(8,8,8,0.5);transition:all .15s;}
+.tech-cat.on{background:rgba(40,90,20,0.7);color:#8cd870;border-color:rgba(90,205,48,0.35);}
+.tech-cat.add{flex:0.4;font-size:10px;color:rgba(255,255,255,0.22);}
+.tech-list{display:flex;flex-direction:column;gap:7px;}
+.tech-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:11px;padding:10px 12px;cursor:pointer;transition:all .15s;min-height:56px;}
+.tech-item:active{background:rgba(255,255,255,0.09);}
+.tech-item.locked{opacity:.4;}
+.tech-thumb{width:68px;height:42px;background:rgba(15,40,10,0.85);border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.08);position:relative;}
+.play-ring{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;}
+.tech-duration{position:absolute;bottom:3px;right:4px;font-size:8px;color:rgba(255,255,255,0.5);background:rgba(0,0,0,0.55);border-radius:3px;padding:1px 4px;}
+.tech-name{font-size:12px;font-weight:700;color:#fff;line-height:1.3;}
+.tech-meta{font-size:10px;color:rgba(255,255,255,0.42);margin-top:2px;}
+.tech-status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.tech-chevron{font-size:14px;color:rgba(255,255,255,0.3);flex-shrink:0;}
+/* Technique detail panel */
+.tech-detail-panel{position:absolute;inset:0;z-index:5;background:var(--dk);display:none;flex-direction:column;overflow:hidden;}
+.tech-detail-panel.open{display:flex;}
+.video-mock{background:#0a1a0a;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;aspect-ratio:16/9;max-height:40%;border-bottom:1px solid rgba(255,255,255,0.07);}
+.video-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.video-play-btn{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.video-play-btn:active{transform:scale(0.95);}
+.video-play-btn.playing{background:rgba(212,136,42,0.3);border-color:var(--gold-warm);}
+.video-title-overlay{font-size:12px;color:rgba(255,255,255,0.6);text-align:center;padding:0 20px;}
+.scrubber-row{position:absolute;bottom:0;left:0;right:0;padding:10px 16px;background:linear-gradient(transparent,rgba(0,0,0,0.7));}
+.scrubber-track{height:4px;background:rgba(255,255,255,0.2);border-radius:2px;cursor:pointer;}
+.scrubber-fill{height:100%;background:var(--gold-warm);border-radius:2px;transition:width .3s;}
+.time-row{display:flex;justify-content:space-between;margin-top:6px;}
+.time-lbl{font-size:10px;color:rgba(255,255,255,0.5);}
+.tech-detail-body{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:12px;}
+.td-title{font-size:18px;font-weight:700;color:#fff;}
+.td-badges{display:flex;gap:8px;flex-wrap:wrap;}
+.td-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;}
+.td-desc{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7;}
+.td-steps{display:flex;flex-direction:column;gap:8px;}
+.td-step{display:flex;gap:12px;align-items:flex-start;}
+.td-step-num{width:26px;height:26px;border-radius:50%;background:rgba(90,205,48,0.15);border:1px solid rgba(90,205,48,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#8cd870;flex-shrink:0;}
+.td-step-txt{font-size:12px;color:rgba(255,255,255,0.65);line-height:1.6;padding-top:3px;}
+
+/* ══════════════════════════════════════════
+   ACHIEVEMENTS PAGE — Honeycomb + Avatar
+══════════════════════════════════════════ */
+.ach-wrap{
+  flex:1;display:flex;flex-direction:row;
+  overflow:hidden;padding:14px 18px;gap:16px;
+}
+
+/* Left: avatar panel */
+.ach-avatar-col{
+  width:140px;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  padding-top:8px;
+}
+.ach-avatar-fig{width:90px;aspect-ratio:1/1.7;background:rgba(255,255,255,0.06);border:2px dashed rgba(255,255,255,0.18);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.28);text-align:center;line-height:1.6;}
+.ach-student-name{font-size:12px;font-weight:700;color:#fff;text-align:center;}
+.ach-belt-pip{width:54px;height:15px;border-radius:3px;position:relative;overflow:hidden;}
+.ach-belt-stripe{position:absolute;top:30%;left:0;right:0;height:40%;}
+.ach-belt-name{font-size:10px;color:rgba(255,255,255,0.5);text-align:center;margin-top:3px;}
+.ach-badges-earned{font-size:10px;color:rgba(255,255,255,0.35);text-align:center;margin-top:4px;}
+
+/* Right: honeycomb */
+.ach-hive-wrap{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:8px 0;
+}
+.ach-hive-wrap::-webkit-scrollbar{width:3px;}
+.ach-hive-wrap::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);}
+
+/* ── HONEYCOMB CSS ──
+   Uses offset rows to create a true hex grid.
+   Each row is offset by half a cell width.
+*/
+.hive{
+  display:flex;flex-direction:column;gap:0;
+  width:100%;
+}
+.hive-row{
+  display:flex;flex-direction:row;
+  margin-bottom:-8px; /* row overlap for honeycomb tight pack */
+}
+.hive-row.offset{
+  margin-left:calc((100% / 6) / 2);/* offset alternate rows by half cell */
+}
+
+/* Each hex cell */
+.hive-cell{
+  position:relative;
+  width:calc(100% / 6);
+  aspect-ratio:1/1.155; /* hex height = width * (2/√3) ≈ 1.155 */
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .15s;
+  padding:3px;
+}
+.hive-cell:active{transform:scale(0.93);}
+
+/* The actual hex badge SVG + content */
+.hive-badge{
+  position:relative;width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+}
+.hive-badge svg.hex-bg{
+  position:absolute;inset:0;width:100%;height:100%;
+}
+.hive-badge-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;width:100%;height:100%;padding-bottom:12%;
+}
+.hive-badge-name{
+  position:absolute;bottom:12%;left:0;right:0;
+  text-align:center;font-size:8px;font-weight:700;
+  color:rgba(255,255,255,0.75);line-height:1.2;
+  padding:0 4px;
+}
+
+/* Medal dots below badge name */
+.hive-medals{
+  position:absolute;bottom:4%;left:0;right:0;
+  display:flex;justify-content:center;gap:3px;
+}
+.medal-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.15);
+}
+.medal-dot.bronze-earned{background:#c07830;border-color:#c07830;}
+.medal-dot.silver-earned{background:#c8c8c8;border-color:#c8c8c8;}
+.medal-dot.gold-earned{background:#ffd700;border-color:#ffd700;}
+
+/* Detail modal for badge */
+.badge-modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.72);z-index:50;
+  align-items:center;justify-content:center;
+}
+.badge-modal-overlay.op{display:flex;}
+.badge-modal-box{
+  background:var(--dk);border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px;width:340px;max-width:88vw;
+  overflow:hidden;
+}
+.bm-header{
+  padding:18px 20px 14px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.bm-animal-icon{
+  width:56px;height:56px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.12);
+}
+.bm-name{font-size:18px;font-weight:700;color:#fff;}
+.bm-theme{font-size:12px;color:rgba(255,255,255,0.4);}
+.bm-body{padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.bm-tier{display:flex;flex-direction:column;gap:6px;}
+.bm-tier-row{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.04);border-radius:8px;
+  padding:8px 10px;
+}
+.bm-medal{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;}
+.bm-tier-lbl{font-size:12px;font-weight:700;flex:1;}
+.bm-tier-prog{font-size:11px;color:rgba(255,255,255,0.45);}
+.bm-tier-check{font-size:14px;font-weight:700;}
+.bm-prog-bar{height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;margin-top:4px;}
+.bm-prog-fill{height:100%;border-radius:2px;}
+.bm-close{width:100%;padding:13px;background:rgba(255,255,255,0.06);border:none;border-radius:0 0 16px 16px;color:rgba(255,255,255,0.5);font-size:14px;cursor:pointer;border-top:1px solid rgba(255,255,255,0.08);}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══ VILLAGE BACKGROUND ══ -->
+<div class="village-bg">
+  <svg class="v-layer" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid slice">
+    <rect width="1000" height="560" fill="#091609"/>
+    <circle cx="820" cy="80" r="28" fill="#e8f0d8" opacity="0.18"/>
+    <circle cx="832" cy="74" r="24" fill="#091609" opacity="0.9"/>
+    <circle cx="120" cy="55" r="1.2" fill="#fff" opacity="0.4"/><circle cx="280" cy="32" r="1" fill="#fff" opacity="0.3"/><circle cx="440" cy="70" r="1.5" fill="#fff" opacity="0.35"/><circle cx="600" cy="40" r="1" fill="#fff" opacity="0.3"/><circle cx="720" cy="25" r="1.2" fill="#fff" opacity="0.4"/><circle cx="900" cy="60" r="1" fill="#fff" opacity="0.28"/>
+    <polygon points="0,380 120,180 240,380" fill="#0e2a0e" opacity="0.7"/>
+    <polygon points="80,380 220,140 360,380" fill="#112e11" opacity="0.65"/>
+    <polygon points="300,380 460,120 620,380" fill="#0e2a0e" opacity="0.68"/>
+    <polygon points="500,380 660,155 820,380" fill="#112e11" opacity="0.62"/>
+    <rect x="52" y="248" width="36" height="78" fill="#0a1a0a" opacity="0.8"/>
+    <polygon points="34,248 70,212 106,248" fill="#0a1a0a" opacity="0.8"/>
+    <polygon points="38,232 70,200 102,232" fill="#0a1a0a" opacity="0.7"/>
+    <rect x="878" y="228" width="44" height="95" fill="#081408" opacity="0.78"/>
+    <polygon points="858,228 900,188 942,228" fill="#081408" opacity="0.78"/>
+  </svg>
+  <svg class="v-layer" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid slice">
+    <ellipse cx="170" cy="350" rx="38" ry="50" fill="#122012" opacity="0.9"/>
+    <ellipse cx="170" cy="330" rx="30" ry="40" fill="#183018" opacity="0.88"/>
+    <rect x="165" y="395" width="10" height="25" fill="#0c180c" opacity="0.85"/>
+    <ellipse cx="780" cy="355" rx="36" ry="48" fill="#122012" opacity="0.88"/>
+    <ellipse cx="780" cy="336" rx="28" ry="38" fill="#183018" opacity="0.85"/>
+    <rect x="462" y="310" width="8" height="120" fill="#1e0808" opacity="0.82"/>
+    <rect x="530" y="310" width="8" height="120" fill="#1e0808" opacity="0.82"/>
+    <rect x="450" y="308" width="100" height="10" rx="2" fill="#2a0c0c" opacity="0.85"/>
+  </svg>
+  <svg class="v-layer" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid slice">
+    <rect x="60" y="240" width="7" height="320" rx="3" fill="#1c3812" opacity="0.75"/>
+    <rect x="80" y="260" width="6" height="300" rx="3" fill="#1c3812" opacity="0.65"/>
+    <rect x="920" y="235" width="7" height="325" rx="3" fill="#1c3812" opacity="0.72"/>
+    <rect x="905" y="258" width="6" height="302" rx="3" fill="#1c3812" opacity="0.62"/>
+    <line x1="60" y1="290" x2="88" y2="290" stroke="#1c3812" stroke-width="2" opacity="0.5"/>
+    <line x1="60" y1="340" x2="88" y2="340" stroke="#1c3812" stroke-width="2" opacity="0.45"/>
+    <line x1="905" y1="288" x2="927" y2="288" stroke="#1c3812" stroke-width="2" opacity="0.5"/>
+    <rect x="336" y="448" width="26" height="10" rx="2" fill="#0e1e0e" opacity="0.9"/>
+    <circle cx="349" cy="436" r="4" fill="#ffcc44" opacity="0.55"/>
+    <rect x="638" y="448" width="26" height="10" rx="2" fill="#0e1e0e" opacity="0.9"/>
+    <circle cx="651" cy="436" r="4" fill="#ffcc44" opacity="0.55"/>
+    <line x1="330" y1="180" x2="330" y2="225" stroke="#ffcc44" stroke-width="0.8" opacity="0.3"/>
+    <ellipse cx="330" cy="228" rx="8" ry="10" fill="#2a1a04" stroke="#ffcc44" stroke-width="0.8" opacity="0.7"/>
+    <circle cx="330" cy="225" r="3.5" fill="#ffcc44" opacity="0.5"/>
+    <line x1="670" y1="160" x2="670" y2="210" stroke="#ffcc44" stroke-width="0.8" opacity="0.3"/>
+    <ellipse cx="670" cy="213" rx="7" ry="9" fill="#2a1a04" stroke="#ffcc44" stroke-width="0.8" opacity="0.65"/>
+    <ellipse cx="500" cy="555" rx="600" ry="55" fill="#0a1e0a" opacity="0.5"/>
+  </svg>
+</div>
+
+<!-- ══ PROFILE SCREEN ══ -->
+<div class="scr on" id="scr-profile">
+<div class="profile-wrap">
+  <div class="avatar-col">
+    <div class="avatar-fig"><span>3D<br>Avatar</span></div>
+    <div class="stripes-row" id="profile-stripes"></div>
+    <div class="belt-badge" id="profile-belt-badge"></div>
+    <div class="stats-strip">
+      <div class="stat-pip"><div class="sp-val" id="stat-attend">—</div><div class="sp-key">Attend.</div></div>
+      <div class="stat-pip"><div class="sp-val" id="stat-grade">—</div><div class="sp-key">Next grade</div></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="demo-bar" style="display:flex;align-items:center;gap:6px;">
+  <button onclick="history.back()" style="background:rgba(30,60,20,0.8);border:1px solid rgba(90,205,48,0.35);border-radius:7px;padding:4px 10px;font-size:11px;font-weight:600;color:rgba(180,240,130,0.9);cursor:pointer;flex-shrink:0;">‹ Back</button>
+      <button class="demo-btn on" id="demo-ryo" onclick="setDemo('kai')">Kai — Honoo Belt (Intermediate)</button>
+      <button class="demo-btn" id="demo-hana" onclick="setDemo('mia')">Mia — Taiyo Belt (Beginner)</button>
+    </div>
+    <div class="challenge-banner" id="challenge-banner" style="display:none;">
+      <div class="cb-dot">!</div>
+      <div style="flex:1;">
+        <div class="cb-txt" id="cb-title" style="font-weight:700;"></div>
+        <div class="cb-days" id="cb-days"></div>
+      </div>
+      <div style="font-size:11px;color:rgba(255,220,100,0.6);">View ›</div>
+    </div>
+    <div class="top-bar">
+      <span class="student-name" id="student-name">—</span>
+      <span class="level-badge" id="student-level">—</span>
+    </div>
+    <div class="xp-row">
+      <span class="xp-label">XP</span>
+      <div class="xp-track"><div class="xp-fill-bar" id="xp-fill" style="width:0%;background:var(--xp-fill);"></div></div>
+      <span class="xp-label" id="xp-label">—</span>
+    </div>
+    <div class="activity-card">
+      <div class="card-tabs">
+        <div class="card-tab on" id="ptab-activity" onclick="setProfileTab('activity')">Activity</div>
+        <div class="card-tab" id="ptab-profile" onclick="setProfileTab('profile')">Profile</div>
+        <div class="card-tab" id="ptab-stats" onclick="setProfileTab('stats')">Stats</div>
+      </div>
+      <div class="card-body" id="profile-card-body"></div>
+    </div>
+    <div class="nav-cluster">
+      <div class="nav-btn" id="nav-training" onclick="openPage('training')">
+        <div class="nav-ico" style="background:rgba(90,205,48,0.18);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.8"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="13" y2="15"/></svg></div>
+        <span class="nav-lbl">Training</span>
+      </div>
+      <div class="nav-btn" id="nav-techniques" onclick="openPage('techniques')">
+        <div class="nav-ico" style="background:rgba(100,140,255,0.18);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.8"><line x1="5" y1="19" x2="17" y2="7"/><path d="M17 7 L21 3" stroke-linecap="round"/><ellipse cx="6.5" cy="17.5" rx="2.5" ry="1.8" transform="rotate(45 6.5 17.5)"/></svg></div>
+        <span class="nav-lbl">Techniques</span>
+      </div>
+      <div class="nav-btn" id="nav-achievements" onclick="openPage('achievements')">
+        <div class="nav-ico" style="background:rgba(255,200,0,0.18);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.8"><path d="M8 3H16V12C16 15 12 17 12 17C12 17 8 15 8 12Z"/><path d="M16 6C18 6 20 7.5 20 10C20 12.5 18 14 16 13"/><path d="M8 6C6 6 4 7.5 4 10C4 12.5 6 14 8 13"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="9" y1="21" x2="15" y2="21"/></svg></div>
+        <span class="nav-lbl">Achievements</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ TRAINING PAGE ══ -->
+<div class="slide-page" id="page-training">
+  <div class="slide-header">
+    <div class="back-btn" onclick="closePage('training')">&#8592;</div>
+    <div class="slide-ico" style="background:rgba(90,205,48,0.2);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8cd870" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/></svg></div>
+    <span class="slide-title">Training</span>
+    <span class="slide-sub" id="training-sub">—</span>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;padding:14px 18px;gap:12px;">
+    <div class="training-layout">
+      <div class="train-col-left" id="train-left">
+        <div class="sec-lbl">Weekly challenge</div>
+        <div class="challenge-card" id="challenge-card"></div>
+        <div class="sec-lbl">Upcoming</div>
+        <div id="upcoming-list"></div>
+      </div>
+      <div class="train-avatar-center">
+        <div class="train-avatar-fig"><span>3D<br>Avatar</span></div>
+        <div class="train-belt-pip" id="train-belt-pip"></div>
+        <div class="train-belt-name" id="train-belt-name">—</div>
+      </div>
+      <div class="train-col-right">
+        <div class="sec-lbl">Dailies — this week</div>
+        <div class="dailies-card" id="dailies-card"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TECHNIQUES PAGE ══ -->
+<div class="slide-page" id="page-techniques">
+  <div class="slide-header">
+    <div class="back-btn" onclick="closePage('techniques')">&#8592;</div>
+    <div class="slide-ico" style="background:rgba(100,140,255,0.2);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8aabff" stroke-width="2"><line x1="5" y1="19" x2="17" y2="7"/><ellipse cx="6.5" cy="17.5" rx="2.5" ry="1.8" transform="rotate(45 6.5 17.5)"/></svg></div>
+    <span class="slide-title">Techniques</span>
+    <span class="slide-sub" id="techniques-sub">—</span>
+  </div>
+  <div class="slide-body" style="position:relative;">
+    <div class="tech-cats" id="tech-cats"></div>
+    <div class="tech-list" id="tech-list"></div>
+    <!-- Technique detail panel -->
+    <div class="tech-detail-panel" id="tech-detail-panel">
+      <div class="slide-header">
+        <div class="back-btn" onclick="closeTechDetail()">&#8592;</div>
+        <div class="slide-ico" style="background:rgba(100,140,255,0.2);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8aabff" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg></div>
+        <span class="slide-title" id="td-header-title">—</span>
+      </div>
+      <div class="video-mock" id="video-mock">
+        <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice"><rect width="400" height="225" fill="#091609"/><polygon points="200,20 380,140 380,225 0,225 20,140" fill="#0e2a0e" opacity="0.8"/><rect x="170" y="100" width="60" height="125" fill="#0a1a0a" opacity="0.7"/><polygon points="130,100 200,60 270,100" fill="#0a1a0a" opacity="0.7"/></svg>
+        <div class="video-overlay">
+          <div class="video-play-btn" id="video-play-btn" onclick="togglePlay()">
+            <svg id="play-icon" width="26" height="26" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
+            <svg id="pause-icon" width="26" height="26" viewBox="0 0 24 24" fill="white" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          </div>
+          <div class="video-title-overlay" id="video-title-overlay">—</div>
+        </div>
+        <div class="scrubber-row">
+          <div class="scrubber-track" onclick="scrub(event)"><div class="scrubber-fill" id="scrubber-fill" style="width:0%;"></div></div>
+          <div class="time-row"><span class="time-lbl" id="time-cur">0:00</span><span class="time-lbl" id="time-total">—</span></div>
+        </div>
+      </div>
+      <div class="tech-detail-body">
+        <div class="td-title" id="td-title">—</div>
+        <div class="td-badges" id="td-badges"></div>
+        <div class="td-desc" id="td-desc">—</div>
+        <div class="sec-lbl">Key steps</div>
+        <div class="td-steps" id="td-steps"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ACHIEVEMENTS PAGE ══ -->
+<div class="slide-page" id="page-achievements">
+  <div class="slide-header">
+    <div class="back-btn" onclick="closePage('achievements')">&#8592;</div>
+    <div class="slide-ico" style="background:rgba(255,200,0,0.18);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2"><path d="M8 3H16V12C16 15 12 17 12 17C12 17 8 15 8 12Z"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="9" y1="21" x2="15" y2="21"/></svg></div>
+    <span class="slide-title">Achievements</span>
+    <span class="slide-sub" id="achievements-sub">—</span>
+  </div>
+  <div class="ach-wrap">
+    <!-- Left: Avatar -->
+    <div class="ach-avatar-col" id="ach-avatar-col">
+      <div class="ach-avatar-fig"><span>3D<br>Avatar</span></div>
+      <div class="ach-student-name" id="ach-student-name">—</div>
+      <div class="ach-belt-pip" id="ach-belt-pip"></div>
+      <div class="ach-belt-name" id="ach-belt-name">—</div>
+      <div class="ach-badges-earned" id="ach-badges-earned">—</div>
+    </div>
+    <!-- Right: Honeycomb -->
+    <div class="ach-hive-wrap">
+      <div class="hive" id="badge-hive"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BADGE DETAIL MODAL ══ -->
+<div class="badge-modal-overlay" id="badge-modal" onclick="closeBadgeModal(event)">
+  <div class="badge-modal-box" id="badge-modal-box">
+    <div class="bm-header" id="bm-header"></div>
+    <div class="bm-body" id="bm-body"></div>
+    <button class="bm-close" onclick="document.getElementById('badge-modal').classList.remove('op')">Close</button>
+  </div>
+</div>
+
+<script>
+// ══ SHARED DATA ══
+const BD=[
+  {n:'Shiro Belt',c:'#e8e8e8',s:null},{n:'Kiiro Belt',c:'#f0c830',s:null},
+  {n:'Taiyo Belt',c:'#e8702a',s:null},{n:'Kazan Belt',c:'#e8702a',s:'#cc2222'},
+  {n:'Honoo Belt',c:'#c42020',s:null},{n:'Shin Honoo Belt',c:'#c42020',s:'#888888'},
+  {n:'Mori Belt',c:'#2e7d22',s:null},{n:'Shin Mori Belt',c:'#2e7d22',s:'#888888'},
+  {n:'Kage Belt',c:'#888888',s:null},{n:'Shin Kage Belt',c:'#888888',s:'#1a1a1a'},
+  {n:'Mushin Belt',c:'#1a1a1a',s:'#f0f0f0'}
+];
+const EL=[
+  {n:'Air',f:'#2a2a3a',st:'#ffffff',lf:'#f0f0f8',ls:'#3a3a6a',pb:'#EEEDFE',pt:'#3C3489',sym:'air'},
+  {n:'Earth',f:'#1a4010',st:'#5acd30',lf:'#EAF3DE',ls:'#3B6D11',pb:'#EAF3DE',pt:'#27500A',sym:'earth'},
+  {n:'Water',f:'#0e2260',st:'#4488ff',lf:'#E6F1FB',ls:'#185FA5',pb:'#E6F1FB',pt:'#0C447C',sym:'water'},
+  {n:'Fire',f:'#6a1a05',st:'#ff6a20',lf:'#FAECE7',ls:'#993C1D',pb:'#FAECE7',pt:'#712B13',sym:'fire'}
+];
+
+function pip(c,s,w=24,h=10){return`<div style="width:${w}px;height:${h}px;border-radius:3px;background:${c};position:relative;overflow:hidden;flex-shrink:0;">${s?`<div style="position:absolute;top:30%;left:0;right:0;height:40%;background:${s};"></div>`:''}</div>`;}
+function esvg(sym,stroke,sz,op){const sw=1.6;let i='';if(sym==='air')i=`<path d="M8 14 Q14 9 20 14 Q14 19 8 14Z" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${op}"/><path d="M10 19 Q16 14 22 19" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${op*0.6}"/><circle cx="16" cy="14" r="1.2" fill="${stroke}" opacity="${op}"/>`;else if(sym==='earth')i=`<polygon points="16,8 24,22 8,22" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${op}"/><line x1="10" y1="18" x2="22" y2="18" stroke="${stroke}" stroke-width="${sw}" opacity="${op}"/>`;else if(sym==='water')i=`<path d="M16 8 C16 8 22 15 22 19 C22 22.3 19.3 25 16 25 C12.7 25 10 22.3 10 19 C10 15 16 8 16 8Z" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${op}"/><path d="M12 20 Q16 17 20 20" fill="none" stroke="${stroke}" stroke-width="${sw*0.8}" opacity="${op*0.7}"/>`;else if(sym==='fire')i=`<path d="M16 7 C16 7 21 13 21 18 C21 21.3 18.8 24 16 24 C13.2 24 11 21.3 11 18 C11 15 13 12 13 12 C13 12 14 15 16 15 C16 15 14 11 16 7Z" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${op}"/>`;return`<svg width="${sz}" height="${sz}" viewBox="0 0 32 32">${i}</svg>`;}
+function eico(ei,sz,half){const e=EL[ei];const f=e.f,s=e.st;if(half)return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;border:1.5px solid ${s};position:relative;overflow:hidden;flex-shrink:0;"><div style="position:absolute;left:0;top:0;width:50%;height:100%;background:${f};"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">${esvg(e.sym,s,sz*0.72,0.85)}</div></div>`;return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;border:1.5px solid ${s};background:${f};flex-shrink:0;display:flex;align-items:center;justify-content:center;">${esvg(e.sym,s,sz*0.72,0.9)}</div>`;}
+function eicoEmpty(ei,sz){const e=EL[ei];return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;border:1px solid ${e.st};background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;opacity:0.28;">${esvg(e.sym,e.st,sz*0.72,0.5)}</div>`;}
+function getTierLabel(bi){if(bi<=3)return'Shokyu';if(bi<=7)return'Chokyu';return'Jokyu';}
+
+// ══ BADGE DEFINITIONS — 12 animal/nature badges, each with 3 levels ══
+const BADGES=[
+  {id:'wolf',name:'Wolf',theme:'Strength & persistence',icon:'wolf',levels:[
+    {medal:'bronze',label:'Cub',desc:'Attend 20 classes',target:20,stat:'classes'},
+    {medal:'silver',label:'Pack',desc:'Attend 50 classes',target:50,stat:'classes'},
+    {medal:'gold',label:'Alpha',desc:'Attend 100 classes',target:100,stat:'classes'},
+  ]},
+  {id:'dragon',name:'Dragon',theme:'Mastery & power',icon:'dragon',levels:[
+    {medal:'bronze',label:'Hatchling',desc:'Complete Shokyu tier',target:4,stat:'belts'},
+    {medal:'silver',label:'Awakened',desc:'Complete Chokyu tier',target:8,stat:'belts'},
+    {medal:'gold',label:'Ascendant',desc:'Reach Jokyu tier',target:9,stat:'belts'},
+  ]},
+  {id:'tiger',name:'Tiger',theme:'Speed & courage',icon:'tiger',levels:[
+    {medal:'bronze',label:'Prowl',desc:'Earn 5 stripes',target:5,stat:'stripes'},
+    {medal:'silver',label:'Pounce',desc:'Earn 15 stripes',target:15,stat:'stripes'},
+    {medal:'gold',label:'Apex',desc:'Earn 30 stripes',target:30,stat:'stripes'},
+  ]},
+  {id:'crane',name:'Crane',theme:'Grace & technique',icon:'crane',levels:[
+    {medal:'bronze',label:'Fledgling',desc:'Complete 3 techniques',target:3,stat:'techniques'},
+    {medal:'silver',label:'Soaring',desc:'Complete 10 techniques',target:10,stat:'techniques'},
+    {medal:'gold',label:'Master',desc:'Complete all techniques',target:20,stat:'techniques'},
+  ]},
+  {id:'fox',name:'Fox',theme:'Cleverness & agility',icon:'fox',levels:[
+    {medal:'bronze',label:'Kit',desc:'Complete a 5-day daily streak',target:5,stat:'streak'},
+    {medal:'silver',label:'Cunning',desc:'Complete a 15-day streak',target:15,stat:'streak'},
+    {medal:'gold',label:'Trickster',desc:'Complete a 30-day streak',target:30,stat:'streak'},
+  ]},
+  {id:'bear',name:'Bear',theme:'Resilience & strength',icon:'bear',levels:[
+    {medal:'bronze',label:'Cub',desc:'Complete 20 push-ups in one session',target:20,stat:'pushups'},
+    {medal:'silver',label:'Grizzly',desc:'Complete 60 push-ups in one session',target:60,stat:'pushups'},
+    {medal:'gold',label:'Kodiak',desc:'Complete 100 push-ups in one session',target:100,stat:'pushups'},
+  ]},
+  {id:'phoenix',name:'Phoenix',theme:'Transformation',icon:'phoenix',levels:[
+    {medal:'bronze',label:'Ember',desc:'Complete your first Two-Week Challenge',target:1,stat:'challenges'},
+    {medal:'silver',label:'Rising',desc:'Complete 5 challenges',target:5,stat:'challenges'},
+    {medal:'gold',label:'Reborn',desc:'Complete 10 challenges',target:10,stat:'challenges'},
+  ]},
+  {id:'mountain',name:'Mountain',theme:'Achievement & height',icon:'mountain',levels:[
+    {medal:'bronze',label:'Foothills',desc:'Attend 25 sessions',target:25,stat:'sessions'},
+    {medal:'silver',label:'Summit',desc:'Attend 75 sessions',target:75,stat:'sessions'},
+    {medal:'gold',label:'Peak',desc:'Attend 150 sessions',target:150,stat:'sessions'},
+  ]},
+  {id:'oak',name:'Oak',theme:'Endurance',icon:'oak',levels:[
+    {medal:'bronze',label:'Sapling',desc:'Train for 1 full term',target:1,stat:'terms'},
+    {medal:'silver',label:'Growing',desc:'Train for 3 terms',target:3,stat:'terms'},
+    {medal:'gold',label:'Ancient',desc:'Train for 6 terms',target:6,stat:'terms'},
+  ]},
+  {id:'storm',name:'Storm',theme:'Power released',icon:'storm',levels:[
+    {medal:'bronze',label:'Breeze',desc:'Attend your first grading',target:1,stat:'gradings'},
+    {medal:'silver',label:'Thunder',desc:'Attend 5 gradings',target:5,stat:'gradings'},
+    {medal:'gold',label:'Lightning',desc:'Attend 10 gradings',target:10,stat:'gradings'},
+  ]},
+  {id:'river',name:'River',theme:'Flow & consistency',icon:'river',levels:[
+    {medal:'bronze',label:'Stream',desc:'4 weeks consistent attendance',target:4,stat:'weeks'},
+    {medal:'silver',label:'Current',desc:'8 weeks consistent',target:8,stat:'weeks'},
+    {medal:'gold',label:'Torrent',desc:'12 weeks consistent',target:12,stat:'weeks'},
+  ]},
+  {id:'lotus',name:'Lotus',theme:'Growth & discipline',icon:'lotus',levels:[
+    {medal:'bronze',label:'Bud',desc:'Set your first daily target',target:1,stat:'dailies'},
+    {medal:'silver',label:'Bloom',desc:'Complete 10 daily sessions',target:10,stat:'dailies'},
+    {medal:'gold',label:'Eternal',desc:'Complete 30 daily sessions',target:30,stat:'dailies'},
+  ]},
+];
+
+// ══ STUDENT DATA ══
+const STUDENTS={
+  kai:{
+    id:'kai',name:'Kai Gunn',age:9,bi:4,
+    str:[1,1,0.5,0.5],level:18,xp:740,xp_max:1000,
+    attend:91,next_grade:'5w',joined:'September 2022',membership:'Monthly rolling',
+    class_label:'Ninja Yrs 4–6 · Wednesday',
+    parent_name:'John Gunn',challenge_pending:true,challenge_belt:'Mori Belt',
+    challenge_description:'Practise balance — hold one-legged stance for 30 seconds each day.',
+    challenge_days_remaining:11,challenge_assigned_by:'Kenji Tanaka',
+    challenge_confirmed:false,challenge_confirmed_by:null,
+    activity:[
+      {ico:'★',ic:'rgba(255,180,0,0.2)',tc:'#ffd700',txt:'Attended Wednesday class',meta:'1d ago'},
+      {ico:'½',ic:'rgba(100,200,120,0.2)',tc:'#8cd870',txt:'Earned Fire half-stripe',meta:'3d ago'},
+      {ico:'▶',ic:'rgba(100,140,255,0.2)',tc:'#8aabff',txt:'Watched: O-goshi throw',meta:'5d ago'},
+      {ico:'½',ic:'rgba(100,200,120,0.2)',tc:'#8cd870',txt:'Earned Water half-stripe',meta:'1w ago'},
+    ],
+    age_group:'Years 5 & 6',challenge_progress:{done:14,total:22},
+    upcoming_class:{name:'Wednesday class',sub:'6:00pm · Dojo A',days:'6 days'},
+    // Badge progress per badge id: {current, levels_earned:[0,1,2]}
+    badge_progress:{
+      wolf:{current:48,earned:[0,1]},
+      dragon:{current:6,earned:[0,1]},
+      tiger:{current:18,earned:[0,1,2]},
+      crane:{current:12,earned:[0,1]},
+      fox:{current:12,earned:[0]},
+      bear:{current:62,earned:[0,1]},
+      phoenix:{current:3,earned:[0]},
+      mountain:{current:55,earned:[0]},
+      oak:{current:2,earned:[0]},
+      storm:{current:4,earned:[0]},
+      river:{current:7,earned:[0]},
+      lotus:{current:8,earned:[0]},
+    },
+    techniques:[
+      {name:'Front kick — mae geri',cat:'Striking',diff:'Beginner',dur:'3:42',status:'complete',desc:'The fundamental forward kick.',steps:['Stand in ready stance','Raise the knee up high','Drive the heel forward','Strike with the ball of the foot','Retract quickly and return to stance']},
+      {name:'Roundhouse kick — mawashi geri',cat:'Striking',diff:'Intermediate',dur:'4:15',status:'complete',desc:'A circular kick targeting mid-section or head.',steps:['Begin in fighting stance','Pivot on supporting foot','Raise knee toward target','Rotate hip and extend leg in arc','Follow through and return']},
+      {name:'Block combination',cat:'Striking',diff:'Beginner',dur:'2:58',status:'progress',desc:'High, mid, and low blocks in sequence.',steps:['High block — arm above head','Mid block — sweep across body','Low block — arm diagonally down','Flow between blocks smoothly','Maintain stance throughout']},
+      {name:'Spinning back kick',cat:'Striking',diff:'Intermediate',dur:'5:10',status:'locked',desc:'180° rotation delivering a heel strike.',steps:['Step and pivot 180°','Drive the heel directly backward','Eyes on target over shoulder','Extend fully then retract','Re-establish stance']},
+      {name:'Hip throw — o-goshi',cat:'Grappling',diff:'Beginner',dur:'6:22',status:'complete',desc:'Classic throw using hip contact.',steps:['Grip sleeve and lapel','Step in and turn back to uki','Place hip against mid-section','Load weight onto hip','Drive hips forward and pull over']},
+      {name:'Shoulder throw — seoi nage',cat:'Grappling',diff:'Intermediate',dur:'7:05',status:'progress',desc:'Forward throw loading opponent onto back.',steps:['Grip both sleeves','Step in close bending knees','Turn back fully into chest','Pull arms to load weight','Straighten legs and throw forward']},
+      {name:'Basic breakfall',cat:'Grappling',diff:'Beginner',dur:'3:14',status:'complete',desc:'How to fall safely when thrown.',steps:['Begin to fall sideways','Round your body','Slap mat with arm at 45°','Keep chin tucked','Never land on hands or elbows']},
+      {name:'Arm lock — juji gatame',cat:'Grappling',diff:'Advanced',dur:'8:30',status:'locked',desc:'Ground submission on elbow joint.',steps:['Control opponent on ground','Secure arm with both hands','Position legs across chest','Apply steady pressure','Release immediately on tap']},
+      {name:'Shuriken basics',cat:'Shuriken-jutsu',diff:'Beginner',dur:'5:48',status:'complete',desc:'Foundation of shuriken throwing.',steps:['Use practice shuriken only','Stand sideways to target','Grip between thumb and index finger','Release with wrist snap','Follow through and hold stance']},
+      {name:'Distance & targeting',cat:'Shuriken-jutsu',diff:'Intermediate',dur:'6:20',status:'progress',desc:'Adjusting release for distance.',steps:['Start at close range (2m)','Find natural release point','Move back in 50cm increments','Adjust angle for rotation','Consistency from same distance']},
+      {name:'Moving target',cat:'Shuriken-jutsu',diff:'Advanced',dur:'9:10',status:'locked',desc:'Advanced work with a moving target.',steps:['Master static targeting first','Begin with slow pendulum swing','Time throw to near point','Increase swing speed gradually','Focus on release, not movement']},
+    ],
+    dailies:[
+      {name:'Push-ups',reps:'3 × 10 reps',dots:['done','done','done','today','upcoming']},
+      {name:'Sit-ups',reps:'3 × 10 reps',dots:['done','done','done','today','upcoming']},
+      {name:'Squats',reps:'3 × 10 reps',dots:['done','done','done','today','upcoming']},
+    ],
+  },
+  mia:{
+    id:'mia',name:'Mia Gunn',age:7,bi:2,
+    str:[1,1,0,0],level:4,xp:280,xp_max:500,
+    attend:96,next_grade:'8w',joined:'January 2025',membership:'Termly',
+    class_label:'Ninja Yrs 1–3 · Saturday',
+    parent_name:'John Gunn',challenge_pending:false,challenge_belt:null,
+    challenge_description:null,challenge_days_remaining:null,challenge_assigned_by:null,
+    challenge_confirmed:false,challenge_confirmed_by:null,
+    activity:[
+      {ico:'★',ic:'rgba(255,180,0,0.2)',tc:'#ffd700',txt:'Attended Saturday class',meta:'2d ago'},
+      {ico:'↑',ic:'rgba(100,200,120,0.2)',tc:'#8cd870',txt:'Earned Earth full stripe',meta:'1w ago'},
+      {ico:'★',ic:'rgba(255,180,0,0.2)',tc:'#ffd700',txt:'Attended Saturday class',meta:'1w ago'},
+    ],
+    age_group:'Years 1 & 2',challenge_progress:{done:8,total:12},
+    upcoming_class:{name:'Saturday class',sub:'9:30am · Mat 2',days:'3 days'},
+    badge_progress:{
+      wolf:{current:12,earned:[0]},
+      dragon:{current:1,earned:[]},
+      tiger:{current:3,earned:[]},
+      crane:{current:3,earned:[0]},
+      fox:{current:3,earned:[]},
+      bear:{current:14,earned:[]},
+      phoenix:{current:0,earned:[]},
+      mountain:{current:12,earned:[]},
+      oak:{current:1,earned:[0]},
+      storm:{current:1,earned:[0]},
+      river:{current:2,earned:[]},
+      lotus:{current:3,earned:[]},
+    },
+    techniques:[
+      {name:'Front kick — mae geri',cat:'Striking',diff:'Beginner',dur:'3:42',status:'complete',desc:'The fundamental forward kick.',steps:['Stand in ready stance','Raise your knee high','Push your foot forward','Kick with ball of foot','Put foot back down quickly']},
+      {name:'Block combination',cat:'Striking',diff:'Beginner',dur:'2:58',status:'progress',desc:'Three blocks in sequence.',steps:['High block — hands up','Middle block — sweep across','Low block — arms down','Practise slowly','Speed up when ready']},
+      {name:'Roundhouse kick',cat:'Striking',diff:'Intermediate',dur:'4:15',status:'locked',desc:'A swinging kick from the side.',steps:['Lift knee to side','Swing leg around','Kick with instep','Bring back quickly','Practise makes perfect']},
+      {name:'Basic breakfall',cat:'Grappling',diff:'Beginner',dur:'3:14',status:'complete',desc:'How to fall safely.',steps:['Start low','Tuck chin in','Roll to side','Slap the mat','Never use hands to catch']},
+      {name:'Hip throw — o-goshi',cat:'Grappling',diff:'Beginner',dur:'6:22',status:'progress',desc:'A big throw using your hip.',steps:['Hold your partner','Step in close','Hip in front','Lift and throw','Help them land safely']},
+      {name:'Shoulder throw',cat:'Grappling',diff:'Intermediate',dur:'7:05',status:'locked',desc:'Load partner on your back and throw.',steps:['Learn hip throw first','Step in really close','Bend knees low','Load weight on back','Throw forward']},
+      {name:'Shuriken basics',cat:'Shuriken-jutsu',diff:'Beginner',dur:'5:48',status:'progress',desc:'Throwing a practice shuriken safely.',steps:['Safety shuriken only','Stand sideways','Hold gently','Flick your wrist','Follow through']},
+      {name:'Distance & targeting',cat:'Shuriken-jutsu',diff:'Intermediate',dur:'6:20',status:'locked',desc:'Aiming from different distances.',steps:['Master basics first','Start up close','Step back slowly','Keep practising','Consistency is key']},
+    ],
+    dailies:[
+      {name:'Push-ups',reps:'2 × 10 reps',dots:['done','done','today','upcoming','upcoming']},
+      {name:'Sit-ups',reps:'2 × 10 reps',dots:['done','done','today','upcoming','upcoming']},
+    ],
+  }
+};
+
+// ══ ANIMAL SVG ICONS ══
+function animalSvg(type,sz,color){
+  const s=`width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"`;
+  switch(type){
+    case'wolf':return`<svg ${s}><path d="M12 3 C8 3 4 6 4 10 C4 14 7 16 10 17 L10 21 L14 21 L14 17 C17 16 20 14 20 10 C20 6 16 3 12 3Z"/><circle cx="9" cy="10" r="1" fill="${color}"/><circle cx="15" cy="10" r="1" fill="${color}"/><path d="M10 13 Q12 15 14 13"/><path d="M5 5 L4 2 M19 5 L20 2"/></svg>`;
+    case'dragon':return`<svg ${s}><path d="M12 2 L15 8 L20 6 L17 12 L20 18 L14 16 L12 21 L10 16 L4 18 L7 12 L4 6 L9 8 Z"/><circle cx="10" cy="10" r="1" fill="${color}"/><circle cx="14" cy="10" r="1" fill="${color}"/></svg>`;
+    case'tiger':return`<svg ${s}><path d="M12 4 C8 4 5 7 5 11 C5 15 8 17 11 18 L11 21 L13 21 L13 18 C16 17 19 15 19 11 C19 7 16 4 12 4Z"/><line x1="8" y1="7" x2="8" y2="9"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="16" y1="7" x2="16" y2="9"/><circle cx="10" cy="12" r="0.8" fill="${color}"/><circle cx="14" cy="12" r="0.8" fill="${color}"/><path d="M10 15 Q12 16.5 14 15"/></svg>`;
+    case'crane':return`<svg ${s}><path d="M12 3 C12 3 9 7 9 10 C9 13 11 14 12 14"/><path d="M12 14 L8 19 M12 14 L16 19"/><path d="M12 3 C12 3 16 5 18 8"/><circle cx="12" cy="3" r="1.5" fill="${color}"/></svg>`;
+    case'fox':return`<svg ${s}><path d="M12 6 C9 6 6 9 6 12 C6 15 8 17 10 17.5 L10 21 L14 21 L14 17.5 C16 17 18 15 18 12 C18 9 15 6 12 6Z"/><path d="M6 6 L3 3 M18 6 L21 3"/><circle cx="10" cy="12" r="0.8" fill="${color}"/><circle cx="14" cy="12" r="0.8" fill="${color}"/><path d="M10 14.5 Q12 16 14 14.5"/></svg>`;
+    case'bear':return`<svg ${s}><circle cx="8" cy="7" r="2.5"/><circle cx="16" cy="7" r="2.5"/><path d="M6 9 C6 9 4 11 4 14 C4 17 7 19 12 19 C17 19 20 17 20 14 C20 11 18 9 18 9"/><path d="M6 9 C8 8 10 7.5 12 7.5 C14 7.5 16 8 18 9"/><circle cx="10" cy="14" r="0.8" fill="${color}"/><circle cx="14" cy="14" r="0.8" fill="${color}"/><path d="M10 16.5 Q12 17.5 14 16.5"/></svg>`;
+    case'phoenix':return`<svg ${s}><path d="M12 3 L14 8 L20 6 L16 11 L20 16 L14 13 L12 20 L10 13 L4 16 L8 11 L4 6 L10 8 Z"/><circle cx="12" cy="11" r="2" fill="${color}" opacity="0.4"/></svg>`;
+    case'mountain':return`<svg ${s}><polygon points="12,3 22,21 2,21"/><polygon points="7,13 14,6 21,21 2,21 7,13" fill="none" stroke="${color}" stroke-width="0" opacity="0"/><polyline points="8,21 12,14 16,18"/></svg>`;
+    case'oak':return`<svg ${s}><line x1="12" y1="22" x2="12" y2="12"/><circle cx="12" cy="8" r="6"/><path d="M9 12 C7 10 6 8 8 6"/><path d="M15 12 C17 10 18 8 16 6"/></svg>`;
+    case'storm':return`<svg ${s}><path d="M19 8 H14 L17 3 H8 L5 13 H11 L8 22 Z" fill="${color}" opacity="0.2"/><path d="M19 8 H14 L17 3 H8 L5 13 H11 L8 22 Z"/></svg>`;
+    case'river':return`<svg ${s}><path d="M3 6 Q8 4 12 6 Q16 8 21 6"/><path d="M3 12 Q8 10 12 12 Q16 14 21 12"/><path d="M3 18 Q8 16 12 18 Q16 20 21 18"/></svg>`;
+    case'lotus':return`<svg ${s}><path d="M12 21 C12 21 6 16 6 11 C6 8 9 6 12 6 C15 6 18 8 18 11 C18 16 12 21 12 21Z"/><path d="M12 6 C12 6 9 3 6 4"/><path d="M12 6 C12 6 15 3 18 4"/><line x1="12" y1="21" x2="12" y2="14"/></svg>`;
+    default:return`<svg ${s}><circle cx="12" cy="12" r="8"/></svg>`;
+  }
+}
+
+// ══ PROFILE RENDER ══
+let curDemo='kai',curTechCat='Striking',curProfileTab='activity';
+let playTimer=null,playPos=0,playDuration=0,isPlaying=false;
+
+function renderProfile(){
+  const s=STUDENTS[curDemo];const b=BD[s.bi];
+  document.getElementById('student-name').textContent=s.name;
+  document.getElementById('student-level').textContent='Level '+s.level;
+  const xpPct=Math.round(s.xp/s.xp_max*100);
+  document.getElementById('xp-fill').style.width=xpPct+'%';
+  document.getElementById('xp-label').textContent=s.xp+' / '+s.xp_max;
+  document.getElementById('stat-attend').textContent=s.attend+'%';
+  document.getElementById('stat-grade').textContent=s.next_grade;
+  document.getElementById('profile-belt-badge').innerHTML=`${pip(b.c,b.s,36,17)}<div><div class="belt-name">${b.n}</div><div class="belt-tier">${getTierLabel(s.bi)} · Belt ${s.bi+1}</div></div>`;
+  renderStripes(s);
+  const banner=document.getElementById('challenge-banner');
+  if(s.challenge_pending){
+    banner.style.display='flex';
+    document.getElementById('cb-title').textContent='Challenge Pending — '+s.challenge_belt;
+    document.getElementById('cb-days').textContent=s.challenge_days_remaining+' days remaining · Set by '+s.challenge_assigned_by;
+  } else { banner.style.display='none'; }
+  setProfileTab(curProfileTab);
+}
+function renderStripes(s){
+  const wrap=document.getElementById('profile-stripes');wrap.innerHTML='';
+  for(let i=0;i<4;i++){
+    const v=s.bi>=8?s.str[i]:s.str[i];
+    if(s.bi>=8){ wrap.innerHTML+=v>=1?eico(0,28,false):eicoEmpty(0,28); }
+    else{ if(v>=1)wrap.innerHTML+=eico(i,28,false); else if(v>=0.5)wrap.innerHTML+=eico(i,28,true); else wrap.innerHTML+=eicoEmpty(i,28); }
+  }
+}
+function setDemo(id){
+  curDemo=id;
+  document.getElementById('demo-ryo').classList.toggle('on',id==='kai');
+  document.getElementById('demo-hana').classList.toggle('on',id==='mia');
+  renderProfile();
+}
+function setProfileTab(tab){
+  curProfileTab=tab;
+  ['activity','profile','stats'].forEach(t=>document.getElementById('ptab-'+t).classList.toggle('on',t===tab));
+  const s=STUDENTS[curDemo];const body=document.getElementById('profile-card-body');
+  if(tab==='activity'){
+    body.innerHTML=s.activity.map(r=>`<div class="a-row"><div class="a-ico" style="background:${r.ic};color:${r.tc};">${r.ico}</div><span class="a-txt">${r.txt}</span><span class="a-meta">${r.meta}</span></div>`).join('');
+  } else if(tab==='profile'){
+    body.innerHTML=[['Name',s.name],['Age',s.age],['Joined',s.joined],['Class',s.class_label],['Membership',s.membership]].map(([l,v])=>`<div class="a-row"><span class="a-txt" style="color:rgba(255,255,255,0.45);font-size:10px;">${l}</span><span class="a-meta">${v}</span></div>`).join('');
+  } else {
+    body.innerHTML=[
+      ['◉','rgba(90,205,48,0.18)','#8cd870',`Attendance: ${s.attend}%`],
+      ['◉','rgba(255,180,0,0.18)','#ffd700',`Belt: ${BD[s.bi].n}`],
+      ['◉','rgba(100,140,255,0.18)','#8aabff',`Techniques: ${s.techniques.filter(t=>t.status==='complete').length} completed`],
+      ['◉','rgba(255,200,0,0.18)','#ffd700',`Badges: ${Object.values(s.badge_progress).reduce((a,b)=>a+b.earned.length,0)} earned`],
+    ].map(([i,ic,tc,txt])=>`<div class="a-row"><div class="a-ico" style="background:${ic};color:${tc};">${i}</div><span class="a-txt">${txt}</span></div>`).join('');
+  }
+}
+
+// ══ NAVIGATION ══
+function openPage(page){
+  document.getElementById('page-'+page).classList.add('open');
+  document.getElementById('nav-'+page).classList.add('active-page');
+  if(page==='training')renderTraining();
+  if(page==='techniques')renderTechniques();
+  if(page==='achievements')renderAchievements();
+}
+function closePage(page){
+  document.getElementById('page-'+page).classList.remove('open');
+  document.getElementById('nav-'+page).classList.remove('active-page');
+  if(page==='techniques')closeTechDetail();
+}
+
+// ══ TRAINING ══
+function renderTraining(){
+  const s=STUDENTS[curDemo];const b=BD[s.bi];
+  document.getElementById('training-sub').textContent=s.name+' · '+s.age_group;
+  const tbp=document.getElementById('train-belt-pip');
+  tbp.style.background=b.c;tbp.innerHTML=b.s?`<div class="train-belt-stripe" style="background:${b.s};"></div>`:'';
+  document.getElementById('train-belt-name').textContent=b.n;
+  const cp=s.challenge_progress;const pct=Math.round(cp.done/cp.total*100);
+  document.getElementById('challenge-card').innerHTML=`<div><span class="ch-group-badge">${s.age_group}</span></div><div class="ch-title">Balance &amp; Focus</div><div class="ch-desc">Hold a one-legged stance for 30 seconds. Both sides. Can you reach 60 seconds?</div><div style="margin-top:auto;"><div class="ch-prog-row"><span class="ch-prog-lbl">Class progress</span><span class="ch-prog-val">${cp.done} / ${cp.total} done</span></div><div class="ch-prog-track"><div class="ch-prog-fill" style="width:${pct}%;"></div></div><div class="ch-days">4 days left</div></div>`;
+  const uc=s.upcoming_class;
+  document.getElementById('upcoming-list').innerHTML=`<div class="upcoming-item"><div><div class="up-name">${uc.name}</div><div class="up-sub">${uc.sub}</div></div><div class="up-days">${uc.days}</div></div>`;
+  document.getElementById('dailies-card').innerHTML=s.dailies.map((d,i)=>`${i>0?'<div class="d-sep"></div>':''}<div class="daily-row"><div class="daily-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8cd870" stroke-width="2" stroke-linecap="round"><path d="M6 12 L10 16 L18 8"/></svg></div><div style="flex:1;"><div class="daily-name">${d.name}</div><div class="daily-rep">${d.reps}</div><div class="daily-dots">${d.dots.map(st=>`<div class="d-dot ${st==='done'?'done':st==='today'?'today':''}"></div>`).join('')}</div></div></div>`).join('');
+}
+
+// ══ TECHNIQUES ══
+const TECH_CATS=['Striking','Grappling','Shuriken-jutsu'];
+function renderTechniques(){
+  const s=STUDENTS[curDemo];
+  document.getElementById('techniques-sub').textContent=s.techniques.filter(t=>t.status==='complete').length+' completed';
+  document.getElementById('tech-cats').innerHTML=TECH_CATS.map(c=>`<div class="tech-cat ${c===curTechCat?'on':''}" onclick="setTechCat('${c}')">${c}</div>`).join('')+`<div class="tech-cat add">+ Add</div>`;
+  const items=s.techniques.filter(t=>t.cat===curTechCat);
+  document.getElementById('tech-list').innerHTML=items.map(t=>{
+    const sc=t.status==='complete'?'#5acd30':t.status==='progress'?'#d4882a':'rgba(255,255,255,0.18)';
+    const idx=s.techniques.findIndex(x=>x.name===t.name);
+    return`<div class="tech-item ${t.status==='locked'?'locked':''}" onclick="${t.status!=='locked'?`openTechDetail(${idx})`:''}"><div class="tech-thumb"><div class="play-ring"><svg width="12" height="12" viewBox="0 0 10 10"><polygon points="3,2 8,5 3,8" fill="${t.status==='locked'?'rgba(255,255,255,0.3)':'#fff'}" opacity="${t.status==='locked'?0.4:0.85}"/></svg></div><span class="tech-duration">${t.dur}</span></div><div style="flex:1;min-width:0;"><div class="tech-name">${t.name}</div><div class="tech-meta">${t.diff} · ${t.cat}</div></div><div class="tech-status-dot" style="background:${sc};"></div>${t.status!=='locked'?'<div class="tech-chevron">›</div>':''}</div>`;
+  }).join('');
+}
+function setTechCat(cat){curTechCat=cat;renderTechniques();}
+function openTechDetail(idx){
+  const t=STUDENTS[curDemo].techniques[idx];stopPlay();
+  document.getElementById('tech-detail-panel').classList.add('open');
+  document.getElementById('td-header-title').textContent=t.name;
+  document.getElementById('video-title-overlay').textContent=t.name;
+  document.getElementById('td-title').textContent=t.name;
+  const dc=t.diff==='Beginner'?'rgba(90,205,48,0.2)':t.diff==='Intermediate'?'rgba(212,136,42,0.2)':'rgba(200,60,60,0.2)';
+  const dtc=t.diff==='Beginner'?'#8cd870':t.diff==='Intermediate'?'#d4882a':'#ff8888';
+  document.getElementById('td-badges').innerHTML=`<div class="td-badge" style="background:${dc};color:${dtc};">${t.diff}</div><div class="td-badge" style="background:rgba(100,140,255,0.18);color:#8aabff;">${t.cat}</div><div class="td-badge" style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);">${t.dur}</div>`;
+  document.getElementById('td-desc').textContent=t.desc;
+  document.getElementById('td-steps').innerHTML=t.steps.map((st,i)=>`<div class="td-step"><div class="td-step-num">${i+1}</div><div class="td-step-txt">${st}</div></div>`).join('');
+  const parts=t.dur.split(':');playDuration=parseInt(parts[0])*60+parseInt(parts[1]);playPos=0;updateScrubber();
+  document.getElementById('time-total').textContent=t.dur;
+}
+function closeTechDetail(){document.getElementById('tech-detail-panel').classList.remove('open');stopPlay();}
+function togglePlay(){isPlaying?stopPlay():startPlay();}
+function startPlay(){
+  isPlaying=true;document.getElementById('play-icon').style.display='none';document.getElementById('pause-icon').style.display='block';document.getElementById('video-play-btn').classList.add('playing');
+  playTimer=setInterval(()=>{playPos=Math.min(playPos+1,playDuration);updateScrubber();if(playPos>=playDuration)stopPlay();},1000);
+}
+function stopPlay(){
+  isPlaying=false;clearInterval(playTimer);document.getElementById('play-icon').style.display='block';document.getElementById('pause-icon').style.display='none';document.getElementById('video-play-btn').classList.remove('playing');
+}
+function updateScrubber(){
+  const pct=playDuration>0?Math.round(playPos/playDuration*100):0;
+  document.getElementById('scrubber-fill').style.width=pct+'%';
+  const m=Math.floor(playPos/60),sec=playPos%60;
+  document.getElementById('time-cur').textContent=m+':'+(sec<10?'0':'')+sec;
+}
+function scrub(e){const rect=e.currentTarget.getBoundingClientRect();playPos=Math.round((e.clientX-rect.left)/rect.width*playDuration);updateScrubber();}
+
+// ══ ACHIEVEMENTS — HONEYCOMB ══
+function renderAchievements(){
+  const s=STUDENTS[curDemo];const b=BD[s.bi];
+  // Avatar col
+  document.getElementById('ach-student-name').textContent=s.name;
+  const ap=document.getElementById('ach-belt-pip');
+  ap.style.cssText=`width:54px;height:15px;border-radius:3px;background:${b.c};position:relative;overflow:hidden;`;
+  ap.innerHTML=b.s?`<div class="ach-belt-stripe" style="background:${b.s};"></div>`:'';
+  document.getElementById('ach-belt-name').textContent=b.n;
+  const totalEarned=Object.values(s.badge_progress).reduce((a,bp)=>a+bp.earned.length,0);
+  const totalPossible=BADGES.length*3;
+  document.getElementById('ach-badges-earned').textContent=totalEarned+' / '+totalPossible+' medals';
+  document.getElementById('achievements-sub').textContent=totalEarned+' medals earned';
+
+  // Build honeycomb rows — 4 cells per row, alternating offset
+  const cells=BADGES.map((badge,bi)=>{
+    const bp=s.badge_progress[badge.id]||{current:0,earned:[]};
+    const topLevel=bp.earned.length>0?bp.earned[bp.earned.length-1]:-1;
+    const medalColors=['#c07830','#c8c8c8','#ffd700'];
+    const medalNames=['bronze','silver','gold'];
+    const earned=topLevel>=0;
+    // Hex glow colour based on highest medal earned
+    const glowCol=earned?medalColors[topLevel]:'rgba(255,255,255,0.08)';
+    const borderCol=earned?medalColors[topLevel]:'rgba(255,255,255,0.14)';
+    const bgFill=earned?'rgba(18,18,18,0.96)':'rgba(8,8,8,0.94)';
+    const iconCol=earned?medalColors[topLevel]:'rgba(255,255,255,0.22)';
+    const glowFilter=earned?`filter:drop-shadow(0 0 6px ${medalColors[topLevel]}88);`:'';
+    const medalDots=medalNames.map((m,mi)=>`<div class="medal-dot ${bp.earned.includes(mi)?m+'-earned':''}"></div>`).join('');
+    return`
+    <div class="hive-cell" onclick="openBadge('${badge.id}')">
+      <div class="hive-badge" style="${glowFilter}">
+        <svg class="hex-bg" viewBox="0 0 100 116" xmlns="http://www.w3.org/2000/svg">
+          <!-- shadow -->
+          <polygon points="50,2 98,29 98,87 50,114 2,87 2,29" fill="rgba(0,0,0,0.4)" transform="translate(0,2)"/>
+          <!-- body -->
+          <polygon points="50,2 98,29 98,87 50,114 2,87 2,29" fill="${bgFill}" stroke="${borderCol}" stroke-width="${earned?2:1}"/>
+          <!-- inner ring -->
+          <polygon points="50,10 88,32 88,82 50,104 12,82 12,32" fill="none" stroke="${earned?'rgba(255,255,255,0.3)':'rgba(255,255,255,0.08)'}" stroke-width="1"/>
+        </svg>
+        <div class="hive-badge-content">
+          ${animalSvg(badge.icon,22,iconCol)}
+        </div>
+        <div class="hive-badge-name" style="color:${earned?'rgba(255,255,255,0.9)':'rgba(255,255,255,0.3)'};">${badge.name}</div>
+        <div class="hive-medals">${medalDots}</div>
+      </div>
+    </div>`;
+  });
+
+  // Arrange into honeycomb rows of 4 (offset alternating)
+  const perRow=4;const rows=[];
+  for(let i=0;i<cells.length;i+=perRow){
+    rows.push({cells:cells.slice(i,i+perRow),offset:Math.floor(i/perRow)%2===1});
+  }
+  document.getElementById('badge-hive').innerHTML=rows.map(r=>`
+    <div class="hive-row ${r.offset?'offset':''}">${r.cells.join('')}</div>`).join('');
+}
+
+function openBadge(id){
+  const badge=BADGES.find(b=>b.id===id);
+  const s=STUDENTS[curDemo];
+  const bp=s.badge_progress[id]||{current:0,earned:[]};
+  const medalColors={bronze:'#c07830',silver:'#c8c8c8',gold:'#ffd700'};
+  const medalBg={bronze:'rgba(192,120,48,0.15)',silver:'rgba(200,200,200,0.1)',gold:'rgba(255,215,0,0.12)'};
+  const topEarned=bp.earned.length>0;
+  const iconCol=topEarned?medalColors[badge.levels[bp.earned[bp.earned.length-1]].medal]:'rgba(255,255,255,0.3)';
+  document.getElementById('bm-header').innerHTML=`
+    <div class="bm-animal-icon" style="background:${topEarned?medalBg[badge.levels[bp.earned[bp.earned.length-1]].medal]:'rgba(255,255,255,0.05)'};">${animalSvg(badge.icon,28,iconCol)}</div>
+    <div class="bm-name">${badge.name}</div>
+    <div class="bm-theme">${badge.theme}</div>`;
+  document.getElementById('bm-body').innerHTML=`<div class="bm-tier">`+badge.levels.map((lv,li)=>{
+    const earned=bp.earned.includes(li);
+    const mc=medalColors[lv.medal];
+    const mb=medalBg[lv.medal];
+    const prog=Math.min(100,Math.round(bp.current/lv.target*100));
+    return`<div class="bm-tier-row" style="background:${earned?mb:'rgba(255,255,255,0.03)'};">
+      <div class="bm-medal" style="background:${earned?mc+'22':'rgba(255,255,255,0.06)'};">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${earned?mc:'rgba(255,255,255,0.2)'}" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><path d="M9 12 L11 14 L15 10"/></svg>
+      </div>
+      <div style="flex:1;">
+        <div class="bm-tier-lbl" style="color:${earned?mc:'rgba(255,255,255,0.5)'};">${lv.label}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.35);">${lv.desc}</div>
+        ${!earned?`<div class="bm-prog-bar"><div class="bm-prog-fill" style="width:${prog}%;background:${mc};"></div></div>`:'' }
+      </div>
+      <div class="bm-tier-check" style="color:${earned?mc:'rgba(255,255,255,0.15)'};">${earned?'✓':'·'}</div>
+    </div>`;
+  }).join('')+`</div>`;
+  document.getElementById('badge-modal').classList.add('op');
+}
+function closeBadgeModal(e){if(e.target===document.getElementById('badge-modal'))document.getElementById('badge-modal').classList.remove('op');}
+
+// Auto-select student from URL param
+(function(){
+  const p=new URLSearchParams(window.location.search).get("student");
+  if(p&&STUDENTS[p]){curDemo=p;}
+})();
+renderProfile();
+</script>
+</div>
+</body>
+</html>

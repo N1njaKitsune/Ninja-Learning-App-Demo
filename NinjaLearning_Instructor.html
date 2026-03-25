@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Ninja Learning — Instructor · Harry Bovill</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#f4f4f0;--surf:#fff;--surf2:#f8f8f5;--bdr:#e0e0d8;--bdr2:#ccc;--tx:#1a1a2e;--tx2:#555;--tx3:#999;--dk:#1a1a2e;--dk2:#12122a;--gold:#ba7517;--gb:#FAEEDA;--gt:#633806;--grn:#27500A;--gnb:#EAF3DE;--gnt:#27500A;--red:#791F1F;--rb:#FCEBEB;--rt:#791F1F;--blu:#0C447C;--bb:#E6F1FB;--bt:#0C447C;--r:10px;--rs:6px;}
+html{background:#1a1a2e;}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#1a1a2e;color:var(--tx);font-size:14px;line-height:1.5;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px 0;}
+.shell{width:390px;max-width:390px;min-height:844px;display:flex;flex-direction:column;box-shadow:0 0 0 1px rgba(255,255,255,0.12),0 0 0 8px #0d0d1a,0 0 0 9px rgba(255,255,255,0.06),0 30px 80px rgba(0,0,0,0.7);border-radius:44px;overflow:hidden;background:var(--bg);}
+.topbar{background:var(--dk2);padding:11px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.tb-title{font-size:15px;font-weight:600;color:#f0f0f0;}
+.tb-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px;}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#f0f0f0;}
+.body{flex:1;padding-bottom:70px;}
+.bottom-nav{background:var(--surf);border-top:0.5px solid var(--bdr);display:flex;position:sticky;bottom:0;width:100%;z-index:50;}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 4px 11px;cursor:pointer;border:none;background:transparent;gap:3px;position:relative;}
+.nb:hover{background:var(--surf2);}
+.nb.active .ni,.nb.active .nl{color:var(--tx);font-weight:700;}
+.ni{color:var(--tx3);display:flex;}
+.nl{font-size:10px;color:var(--tx3);}
+.nbadge{position:absolute;top:5px;right:calc(50% - 18px);background:#E24B4A;color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;}
+.scr{display:none;}
+.scr.on{display:block;}
+.lbody{padding:14px 16px;display:flex;flex-direction:column;gap:14px;}
+.sec-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:9px;padding-bottom:6px;border-bottom:0.5px solid var(--bdr);}
+.card{background:var(--surf);border:0.5px solid var(--bdr);border-radius:var(--r);padding:13px 15px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.scard{background:var(--surf);border:0.5px solid var(--bdr);border-radius:var(--r);padding:13px 15px;}
+.sv{font-size:24px;font-weight:700;color:var(--tx);}
+.sl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+.ss{font-size:11px;color:var(--tx2);margin-top:3px;}
+.irow{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:0.5px solid var(--bdr);gap:10px;}
+.irow:last-child{border-bottom:none;}
+.il{font-size:12px;color:var(--tx3);flex-shrink:0;}
+.iv{font-size:12px;font-weight:600;color:var(--tx);text-align:right;}
+.iv.lnk{color:var(--blu);}
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;display:inline-block;}
+.bgg{background:var(--gnb);color:var(--gnt);}
+.bgb{background:var(--bb);color:var(--bt);}
+.bg{background:var(--gb);color:var(--gt);}
+.cc{background:var(--surf);border:0.5px solid var(--bdr);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:border-color .12s;margin-bottom:9px;}
+.cc:hover{border-color:var(--bdr2);}
+.cc.nxt{border-left:4px solid var(--gold);}
+.cc.mine{border-left:3px solid var(--blu);}
+.ccn{font-size:14px;font-weight:700;color:var(--tx);}
+.ccm{font-size:11px;color:var(--tx3);margin-top:2px;}
+.ccstats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:11px;}
+.csv{font-size:14px;font-weight:700;color:var(--tx);}
+.csl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-top:1px;}
+.capbar{height:3px;background:var(--bdr);border-radius:2px;margin-top:4px;overflow:hidden;}
+.capfill{height:100%;border-radius:2px;}
+.beltmini{display:flex;gap:2px;flex-wrap:wrap;margin-top:4px;}
+.bpm{height:6px;border-radius:1px;position:relative;overflow:hidden;}
+.bpms{position:absolute;top:25%;left:0;right:0;height:50%;}
+.cc-foot{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:9px;border-top:0.5px solid var(--bdr);font-size:11px;color:var(--tx3);}
+.sbanner{background:var(--surf);border:0.5px solid var(--bdr);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;margin-bottom:14px;}
+.sbanner:hover{border-color:var(--bdr2);}
+.sbv{font-size:17px;font-weight:700;color:var(--tx);}
+.sbl2{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;}
+.sbdiv{width:0.5px;height:28px;background:var(--bdr);}
+.termwrap{flex:1;padding:0 8px;}
+.termbg{height:4px;background:var(--bdr);border-radius:2px;overflow:hidden;margin:3px 0;}
+.termfill{height:100%;background:#378ADD;border-radius:2px;}
+.gpill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--gnb);color:var(--gnt);white-space:nowrap;}
+.trow{display:flex;gap:3px;background:var(--surf2);border-radius:var(--rs);padding:3px;margin-bottom:13px;}
+.tbtn{flex:1;padding:7px;text-align:center;font-size:12px;font-weight:600;color:var(--tx3);cursor:pointer;border-radius:4px;border:none;background:transparent;}
+.tbtn.on{background:var(--surf);color:var(--tx);border:0.5px solid var(--bdr);}
+.brow{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--surf);border-bottom:0.5px solid var(--bdr);position:sticky;top:52px;z-index:40;}
+.bbtn{background:transparent;border:0.5px solid var(--bdr2);border-radius:var(--rs);padding:5px 12px;font-size:11px;font-weight:600;color:var(--tx2);cursor:pointer;}
+.bbtn:hover{background:var(--surf2);}
+.btitle{font-size:14px;font-weight:700;color:var(--tx);}
+.bsub{font-size:11px;color:var(--tx3);}
+.dbrow{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--dk2);border-bottom:0.5px solid rgba(255,255,255,0.07);position:sticky;top:52px;z-index:40;}
+.dbbtn{background:transparent;border:0.5px solid rgba(255,255,255,0.15);border-radius:var(--rs);padding:5px 12px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;}
+.dbbtn:hover{background:rgba(255,255,255,0.06);}
+.dbtitle{font-size:14px;font-weight:700;color:#f0f0f0;}
+.dbsub{font-size:11px;color:rgba(255,255,255,0.35);}
+.btn{padding:8px 16px;border-radius:var(--rs);border:none;font-size:12px;font-weight:700;cursor:pointer;transition:all .12s;}
+.btn-gold{background:#854f0b;border:0.5px solid var(--gold);color:#fac775;}
+.btn-gold:hover{background:var(--gold);}
+.btn-grn{background:#2a6010;border:0.5px solid #3b6d11;color:#c0dd97;}
+.btn-grn:hover{background:#3b6d11;}
+.btn-gh{background:transparent;border:0.5px solid var(--bdr2);color:var(--tx2);}
+.btn-gh:hover{background:var(--surf2);}
+.btn-ghd{background:transparent;border:0.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);}
+.btn-ghd:hover{background:rgba(255,255,255,0.06);}
+.btn:disabled{opacity:.35;cursor:default;}
+.btn-full{width:100%;padding:12px;font-size:14px;}
+.alrt{border-radius:var(--rs);padding:9px 12px;display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;}
+.alrt.amb{background:var(--gb);border:0.5px solid #EF9F27;}
+.alrt.red{background:var(--rb);border:0.5px solid #F09595;}
+.adot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.adot.amb{background:var(--gold);}
+.adot.red{background:#E24B4A;}
+.atit{font-size:12px;font-weight:700;}
+.atit.amb{color:var(--gt);}
+.atit.red{color:var(--rt);}
+.asub{font-size:11px;margin-top:2px;}
+.asub.amb{color:#854F0B;}
+.asub.red{color:#A32D2D;}
+.bp{border-radius:2px;display:inline-block;position:relative;overflow:hidden;flex-shrink:0;}
+.bps{position:absolute;top:25%;left:0;right:0;height:50%;}
+.dot-P{background:#639922;}
+.dot-A{background:#E24B4A;}
+.dot-F{background:#e0e0d8;}
+.dcard{background:var(--dk2);border-radius:var(--r);padding:15px 17px;margin-bottom:14px;}
+.dc-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.3);margin-bottom:8px;display:flex;justify-content:space-between;}
+.dc-cd{color:#fac775;font-size:11px;font-weight:700;}
+.dc-title{font-size:16px;font-weight:700;color:#f0f0f0;margin-bottom:3px;}
+.dc-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:13px;}
+.dc-stats{display:flex;gap:16px;margin-bottom:13px;}
+.dc-sv{font-size:18px;font-weight:700;color:#f0f0f0;}
+.dc-sl{font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.05em;margin-top:1px;}
+.rrow{display:flex;align-items:center;gap:11px;padding:10px 14px;border-bottom:0.5px solid rgba(255,255,255,0.06);background:var(--dk);}
+.rrow:last-child{border-bottom:none;}
+.rname{font-size:13px;font-weight:600;color:#f0f0f0;flex:1;}
+.att-toggle{display:flex;border-radius:var(--rs);overflow:hidden;border:0.5px solid rgba(255,255,255,0.12);}
+.att-btn{padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,0.3);transition:all .12s;}
+.att-btn.P.on{background:#1a5c08;color:#d4f0b8;}
+.att-btn.A.on{background:#7a1515;color:#ffd0d0;}
+.att-btn:hover:not(.on){background:rgba(255,255,255,0.06);}
+.rrow.P{background:rgba(15,51,6,0.6);border-color:rgba(80,180,40,0.2);}
+.rrow.P .rname{color:#a8d890;}
+.rrow.P .att-belt-sub{color:rgba(160,220,110,0.55);}
+.rrow.A{background:rgba(61,10,10,0.6);border-color:rgba(220,80,80,0.2);}
+.rrow.A .rname{color:#e8a8a8;}
+.rrow.A .att-belt-sub{color:rgba(235,160,160,0.55);}
+.reg-adots{display:flex;gap:3px;}
+.thdr{display:flex;align-items:center;gap:8px;padding:10px 14px 6px;background:var(--dk);}
+.tlbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.3);}
+.tline{flex:1;height:0.5px;background:rgba(255,255,255,0.08);}
+.tcnt{font-size:10px;color:rgba(255,255,255,0.25);}
+.grow{display:flex;align-items:center;gap:11px;padding:10px 14px;border-bottom:0.5px solid rgba(255,255,255,0.06);cursor:pointer;transition:background .12s;background:var(--dk);}
+.grow:last-child{border-bottom:none;}
+.grow.sel{background:rgba(186,117,23,0.2);}
+.grow:hover:not(.sel){background:rgba(255,255,255,0.04);}
+.selbox{width:16px;height:16px;border-radius:4px;border:0.5px solid rgba(255,255,255,0.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.selbox.chk{background:#ba7517;border-color:#ba7517;}
+.chkmark{width:8px;height:5px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px);display:none;}
+.selbox.chk .chkmark{display:block;}
+.gname{font-size:13px;font-weight:600;color:#f0f0f0;}
+.gbelt{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px;}
+.edots{display:flex;gap:4px;}
+.edot{width:17px;height:17px;border-radius:50%;position:relative;overflow:hidden;flex-shrink:0;}
+.gcard{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.08);border-radius:var(--r);padding:13px 14px;margin-bottom:10px;}
+.stripe-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 12px;border-radius:var(--rs);border:0.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);cursor:pointer;min-width:68px;transition:all .12s;}
+.stripe-btn:hover{background:rgba(255,255,255,0.08);}
+.stripe-btn.sel{border-color:rgba(186,117,23,0.7);background:rgba(186,117,23,0.18);}
+.sblbl{font-size:10px;color:rgba(255,255,255,0.5);text-align:center;line-height:1.3;}
+.stripe-btn.sel .sblbl{color:#fac775;}
+.no-elig{font-size:12px;color:rgba(255,255,255,0.25);font-style:italic;}
+.gfooter{background:var(--dk2);padding:10px 16px;border-top:0.5px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;bottom:60px;z-index:30;}
+.sum-badge{background:#ba7517;color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;}
+.modebar{background:rgba(186,117,23,0.12);border-bottom:0.5px solid rgba(186,117,23,0.25);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:100px;z-index:35;}
+.mode-lbl{font-size:12px;color:#fac775;font-weight:700;display:flex;align-items:center;gap:7px;}
+.mdot{width:7px;height:7px;border-radius:50%;background:#fac775;}
+.el-sec{background:var(--surf);border:0.5px solid var(--bdr);border-radius:var(--r);overflow:hidden;margin-bottom:10px;}
+.el-hdr{padding:11px 14px;display:flex;align-items:center;gap:11px;border-bottom:0.5px solid var(--bdr);}
+.el-name{font-size:14px;font-weight:700;color:var(--tx);flex:1;}
+.el-pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;}
+.el-srow{display:flex;align-items:center;gap:11px;padding:8px 14px;border-bottom:0.5px solid var(--bdr);}
+.el-srow:last-child{border-bottom:none;}
+.el-sname{font-size:13px;font-weight:600;color:var(--tx);flex:1;}
+.stype{font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;}
+.rem-btn{font-size:10px;color:var(--rt);background:var(--rb);border:0.5px solid #F09595;border-radius:3px;padding:3px 8px;cursor:pointer;flex-shrink:0;}
+.el-empty{padding:11px 14px;font-size:12px;color:var(--tx3);font-style:italic;}
+.tot-card{background:var(--surf);border:0.5px solid var(--bdr);border-radius:var(--r);padding:13px 15px;}
+.trow2{display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--bdr);}
+.trow2:last-child{border-bottom:none;}
+.tlbl2{font-size:13px;color:var(--tx2);}
+.tval{font-size:18px;font-weight:700;color:var(--tx);}
+.grand{display:flex;justify-content:space-between;align-items:center;padding-top:12px;margin-top:4px;border-top:1px solid var(--bdr2);}
+.glbl{font-size:13px;font-weight:700;}
+.gval{font-size:24px;font-weight:700;}
+.stats-bar{background:var(--dk2);padding:9px 16px;display:flex;gap:20px;border-top:0.5px solid rgba(255,255,255,0.08);position:sticky;bottom:60px;z-index:30;}
+.sbv2{font-size:15px;font-weight:700;color:#f0f0f0;}
+.sbl3{font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.05em;margin-top:1px;}
+.sbv2.grn{color:#c0dd97;}
+.sbv2.red{color:#f7c1c1;}
+.receipt{background:var(--surf);border:0.5px solid var(--bdr);border-radius:var(--r);padding:14px;margin-bottom:10px;cursor:pointer;}
+.receipt:hover{border-color:var(--bdr2);}
+.rec-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
+.rec-date{font-size:13px;font-weight:700;color:var(--tx);}
+.rec-class{font-size:11px;color:var(--tx3);margin-top:2px;}
+.rec-total{font-size:13px;font-weight:700;color:var(--grn);}
+.rec-els{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.rec-el{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--tx2);background:var(--surf2);border:0.5px solid var(--bdr);border-radius:3px;padding:3px 7px;}
+.bt-trans{background:var(--surf2);border-radius:var(--r);padding:16px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;}
+.bt-side{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;}
+.bt-pip{width:80px;height:22px;border-radius:4px;position:relative;overflow:hidden;}
+.bt-str{position:absolute;top:30%;left:0;right:0;height:40%;}
+.tl{background:var(--surf);border:0.5px solid var(--bdr);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.tl-item{display:flex;gap:12px;padding-bottom:13px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-col{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:22px;}
+.tldot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.tldot.dn{background:var(--gnb);color:var(--grn);border:1.5px solid #3B6D11;}
+.tldot.ac{background:var(--gb);color:var(--gt);border:1.5px solid #EF9F27;}
+.tldot.lk{background:var(--surf2);color:var(--tx3);border:1px solid var(--bdr);}
+.tl-line{flex:1;width:1.5px;background:var(--bdr);margin-top:4px;min-height:10px;}
+.tl-item:last-child .tl-line{display:none;}
+.tl-body{flex:1;padding-top:2px;}
+.tl-title{font-size:13px;font-weight:700;color:var(--tx);}
+.tl-title.m{color:var(--tx3);}
+.tl-sub{font-size:12px;color:var(--tx2);margin-top:2px;line-height:1.5;}
+.tl-date{font-size:11px;color:var(--tx3);margin-top:3px;}
+.tl-date.grn{color:var(--grn);font-weight:700;}
+.tl-date.amb{color:#854F0B;font-weight:700;}
+.chal-box{background:var(--gb);border:1px solid #EF9F27;border-radius:var(--r);padding:13px;margin-bottom:10px;}
+.rdy-box{background:var(--gnb);border:1px solid #3B6D11;border-radius:var(--r);padding:13px;margin-bottom:10px;}
+.btn-locked{width:100%;padding:12px;background:var(--surf2);border:0.5px solid var(--bdr);border-radius:var(--r);font-size:13px;font-weight:700;color:var(--tx3);text-align:center;cursor:default;}
+.success-wrap{background:var(--dk);border-radius:var(--r);padding:28px 22px;text-align:center;display:flex;flex-direction:column;align-items:center;}
+.sgl{width:84px;height:84px;border-radius:50%;background:rgba(192,221,151,0.12);border:1.5px solid rgba(192,221,151,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+.spip{width:52px;height:17px;border-radius:3px;position:relative;overflow:hidden;}
+.stitle{font-size:22px;font-weight:700;color:#f0f0f0;margin-bottom:6px;}
+.sname{font-size:16px;color:#c0dd97;font-weight:700;margin-bottom:5px;}
+.ssub{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;margin-bottom:22px;}
+.sdet{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:var(--r);padding:13px;width:100%;margin-bottom:18px;text-align:left;}
+.sdrow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid rgba(255,255,255,0.07);}
+.sdrow:last-child{border-bottom:none;}
+.sdl{font-size:12px;color:rgba(255,255,255,0.4);}
+.sdv{font-size:12px;font-weight:700;color:#f0f0f0;}
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:center;justify-content:center;}
+.mov.op{display:flex;}
+.mbox{background:var(--surf);border-radius:var(--r);width:380px;max-width:96vw;max-height:88vh;overflow-y:auto;}
+.mtop{background:var(--dk);padding:16px 20px;border-radius:var(--r) var(--r) 0 0;display:flex;align-items:center;gap:12px;}
+.mava{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0;}
+.mtitle{font-size:16px;font-weight:700;color:#fff;}
+.msub{font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;}
+.mclose{margin-left:auto;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;color:#fff;flex-shrink:0;}
+.mbody{padding:16px 20px;}
+.msec{margin-bottom:16px;}
+.msec-t{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:8px;padding-bottom:5px;border-bottom:0.5px solid var(--bdr);}
+.medlk{border:1px solid #F09595;border-radius:var(--r);overflow:hidden;margin-bottom:16px;}
+.medhdr{background:var(--rb);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.medhdr:hover{background:#f7c1c1;}
+.medtit{font-size:13px;font-weight:700;color:var(--rt);}
+.medhint{font-size:11px;color:#A32D2D;margin-top:1px;}
+.medreveal{font-size:11px;font-weight:700;color:var(--rt);background:transparent;border:1px solid #F09595;border-radius:var(--rs);padding:4px 10px;cursor:pointer;}
+.medcont{display:none;padding:12px 14px;background:var(--surf);border-top:1px solid #F09595;}
+.medcont.op{display:block;}
+.cmod{background:var(--surf);border-radius:var(--r);width:360px;max-width:96vw;padding:20px;}
+.ctit{font-size:16px;font-weight:700;color:var(--tx);margin-bottom:5px;}
+.csub{font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6;}
+.cbtns{display:flex;gap:8px;}
+.ccancel{flex:1;padding:10px;background:transparent;border:0.5px solid var(--bdr2);border-radius:var(--rs);font-size:13px;color:var(--tx2);cursor:pointer;}
+.ccancel:hover{background:var(--surf2);}
+.cconfirm{flex:1;padding:10px;background:#2a6010;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;color:#c0dd97;cursor:pointer;}
+.cconfirm:hover{background:#3b6d11;}
+.ring-wrap{display:flex;align-items:center;gap:11px;}
+.wstrip{display:flex;gap:5px;margin-bottom:12px;}
+.dbtn{flex:1;text-align:center;padding:7px 3px;border-radius:var(--rs);background:var(--surf);border:0.5px solid var(--bdr);cursor:pointer;}
+.dbtn.on{background:var(--dk);border-color:var(--dk);}
+.dbtn.hc{border-color:var(--gold);}
+.dbn{font-size:10px;color:var(--tx3);text-transform:uppercase;}
+.dbtn.on .dbn{color:rgba(255,255,255,0.4);}
+.dbnum{font-size:14px;font-weight:700;color:var(--tx);margin-top:1px;}
+.dbtn.on .dbnum{color:#fff;}
+.dbdot{width:4px;height:4px;border-radius:50%;background:var(--gold);margin:3px auto 0;}
+.dbdot.h{visibility:hidden;}
+.notif{background:var(--surf);border:0.5px solid var(--bdr);border-radius:var(--rs);padding:9px 12px;display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.ndot{width:7px;height:7px;border-radius:50%;background:#378ADD;flex-shrink:0;margin-top:5px;}
+.ndot.rd{background:var(--bdr);}
+.ntit{font-size:12px;font-weight:700;color:var(--tx);}
+.nsub{font-size:11px;color:var(--tx2);margin-top:2px;}
+.ntime{font-size:10px;color:var(--tx3);margin-top:2px;}
+.dir-ctrl{display:flex;gap:8px;margin-bottom:11px;align-items:center;}
+.dirsrch{flex:1;height:35px;border:0.5px solid var(--bdr2);border-radius:var(--rs);padding:0 11px;font-size:13px;color:var(--tx);background:var(--surf);}
+.dirsrch:focus{outline:none;border-color:var(--dk);}
+.spills{display:flex;gap:3px;}
+.sp{padding:5px 11px;font-size:11px;font-weight:700;border-radius:20px;border:0.5px solid var(--bdr2);background:transparent;color:var(--tx3);cursor:pointer;}
+.sp.on{background:var(--dk);color:#fff;border-color:var(--dk);}
+.glbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);padding:9px 2px 5px;display:flex;align-items:center;gap:7px;}
+.drow{display:flex;align-items:center;gap:11px;padding:9px 13px;border-bottom:0.5px solid var(--bdr);cursor:pointer;}
+.drow:last-child{border-bottom:none;}
+.drow:hover{background:var(--surf2);}
+.gbars{display:flex;gap:5px;align-items:flex-end;height:52px;margin-bottom:7px;}
+.gbw{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.gbbar{width:100%;border-radius:3px 3px 0 0;}
+.gblbl{font-size:9px;color:var(--tx3);text-align:center;}
+.gbval{font-size:9px;font-weight:700;color:var(--grn);text-align:center;}
+.pcard{background:var(--surf);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+.pcard.pnd{border:1.5px solid #EF9F27;}
+.pcard.rdy{border:1.5px solid #3B6D11;}
+.pava{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.ov-tabs{display:flex;gap:3px;background:var(--surf2);border-radius:var(--rs);padding:3px;margin-bottom:14px;}
+.ov-tab{flex:1;padding:7px;text-align:center;font-size:12px;font-weight:600;color:var(--tx3);cursor:pointer;border-radius:4px;border:none;background:transparent;}
+.ov-tab.on{background:var(--surf);color:var(--tx);border:0.5px solid var(--bdr);}
+.ov-panel{display:none;}
+.ov-panel.on{display:block;}
+.my-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;background:var(--bb);color:var(--bt);margin-left:5px;}
+@media(max-width:400px){.g3,.g4{grid-template-columns:1fr 1fr;}.sv{font-size:18px;}}
+</style>
+</head>
+<body>
+<div class="shell">
+<div class="topbar" style="position:relative;">
+  <button onclick="window.location.href='NinjaLearning_Demo.html'" style="position:absolute;top:50%;left:12px;transform:translateY(-50%);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:7px;padding:4px 10px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);cursor:pointer;">‹ Demo</button><div><div class="tb-title" id="tb-title">Good evening, Harry</div><div class="tb-sub" id="tb-sub">Wednesday 25 March 2026</div></div><div class="tb-ava">HB</div></div>
+<div class="body" id="main-body">
+
+<div class="scr on" id="scr-home">
+<div class="lbody">
+<div class="dcard">
+  <div class="dc-lbl"><span>Next class</span><span class="dc-cd">In 45 min</span></div>
+  <div class="dc-title">Ninja Yrs 1–3 · Mat 1</div>
+  <div class="dc-sub">Wednesday 16:15–17:30 · Sensei Harry</div>
+  <div class="dc-stats"><div><div class="dc-sv">22</div><div class="dc-sl">Students</div></div><div><div class="dc-sv">6</div><div class="dc-sl">Free</div></div><div><div class="dc-sv">91%</div><div class="dc-sl">Attend</div></div><div><div class="dc-sv">3</div><div class="dc-sl">Alerts</div></div></div>
+  <div style="display:flex;gap:8px;"><button class="btn btn-gold" onclick="openClass(4)">Go to class ›</button><button class="btn btn-ghd" onclick="openRegister(4,true)">View roster ›</button></div>
+</div>
+<div>
+  <div class="sec-lbl">Instructor details</div>
+  <div class="card">
+    <div class="irow"><span class="il">Full name</span><span class="iv">Harry Bovill</span></div>
+    <div class="irow"><span class="il">Role</span><span class="iv">Lead Instructor</span></div>
+    <div class="irow"><span class="il">Classes assigned</span><span class="iv">9 classes</span></div>
+    <div class="irow"><span class="il">Days teaching</span><span class="iv">5 days</span></div>
+    <div class="irow"><span class="il">Total students</span><span class="iv" id="home-total">—</span></div>
+    <div class="irow"><span class="il">Term</span><span class="iv">Spring 2026 — Week 5 of 12</span></div>
+  </div>
+</div>
+<div>
+  <div class="sec-lbl">Alerts</div>
+  <div class="alrt amb" style="cursor:pointer;" onclick="goClasses('belt-list')"><div class="adot amb"></div><div><div class="atit amb">Challenge pending — 2 students</div><div class="asub amb">Daisy Park · Nina Patel</div></div><div style="margin-left:auto;color:var(--gold);">›</div></div>
+  <div class="alrt red" style="cursor:pointer;" onclick="switchTab('directory')"><div class="adot red"></div><div><div class="atit red">Consecutive absences — 2 students</div><div class="asub red">Kai Tanaka · Lila Osei</div></div><div style="margin-left:auto;color:#E24B4A;">›</div></div>
+  <div class="alrt amb"><div class="adot amb"></div><div><div class="atit amb">Low enrolment — Thursday 17:45</div><div class="asub amb">16/28 enrolled</div></div></div>
+</div>
+<div>
+  <div class="sec-lbl">This week</div>
+  <div class="wstrip" id="h-wstrip"></div>
+  <div id="h-wclasses"></div>
+</div>
+<div>
+  <div class="sec-lbl">Notifications</div>
+  <div class="notif"><div class="ndot"></div><div><div class="ntit">New student — Ethan Foster · Sat 9:30</div><div class="nsub">Starting 28 March</div><div class="ntime">Today 10:42am</div></div></div>
+  <div class="notif"><div class="ndot"></div><div><div class="ntit">Challenge confirmed — Marcus Johansson</div><div class="nsub">Belt award ready</div><div class="ntime">Yesterday 6:15pm</div></div></div>
+  <div class="notif"><div class="ndot rd"></div><div><div class="ntit">Grading saved — Monday 16:15</div><div class="nsub">8 stripes · audit trail</div><div class="ntime">Monday 5:48pm</div></div></div>
+</div>
+</div>
+</div>
+
+<div class="scr" id="scr-classes">
+<div id="cv-overview">
+<div class="lbody">
+<div class="sbanner" onclick="goClasses('school-detail')">
+  <div style="text-align:center;"><div class="sbv">271</div><div class="sbl2">Students</div></div>
+  <div class="sbdiv"></div>
+  <div style="text-align:center;"><div class="sbv">80%</div><div class="sbl2">Capacity</div></div>
+  <div class="sbdiv"></div>
+  <div style="text-align:center;"><div class="sbv">88%</div><div class="sbl2">Attend</div></div>
+  <div class="termwrap"><div style="font-size:10px;color:var(--tx3);">Spring term — Week 5 of 12</div><div class="termbg"><div class="termfill" style="width:41.7%;"></div></div><div style="font-size:10px;color:var(--tx2);">5 of 12 weeks</div></div>
+  <span class="gpill">+7%</span><div style="color:var(--tx3);font-size:16px;margin-left:4px;">›</div>
+</div>
+<div class="trow">
+  <button class="tbtn on" id="tog-day" onclick="setCV('day')">By day</button>
+  <button class="tbtn" id="tog-type" onclick="setCV('type')">By class type</button>
+  <button class="tbtn" id="tog-mine" onclick="setCV('mine')">My classes</button>
+</div>
+<div id="class-list"></div>
+</div>
+</div>
+
+<div id="cv-school-detail" style="display:none;">
+<div class="brow"><button class="bbtn" onclick="goClasses('overview')">Back</button><div><div class="btitle">Whole school</div><div class="bsub">Spring 2026 · Week 5 of 12</div></div></div>
+<div class="lbody">
+<div><div class="sec-lbl">Enrolment &amp; attendance</div><div style="display:grid;grid-template-columns:2fr 1fr;gap:10px;"><div class="card ring-wrap" id="ring-enrol"></div><div class="card ring-wrap" id="ring-att"></div></div></div>
+<div><div class="sec-lbl">Growth</div><div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:12px;"><div><div style="font-size:20px;font-weight:700;">271</div><div style="font-size:12px;color:var(--tx2);">Up from 255</div></div><div style="text-align:right;"><div style="font-size:18px;font-weight:700;color:var(--grn);">+7%</div><div style="font-size:11px;color:var(--tx2);">Term on term</div></div></div><div class="gbars" id="sd-growth"></div></div></div>
+<div><div class="sec-lbl">Classes with available spaces</div><div class="alrt amb"><div class="adot amb"></div><div><div class="atit amb">Thursday 17:45 — 16/28</div></div></div><div class="alrt amb"><div class="adot amb"></div><div><div class="atit amb">Monday 17:45 — 18/28</div></div></div></div>
+<div><div class="sec-lbl">Consecutive absences</div><div class="alrt red"><div class="adot red"></div><div><div class="atit red">Kai Tanaka — Wednesday</div></div></div><div class="alrt red"><div class="adot red"></div><div><div class="atit red">Lila Osei — Monday</div></div></div></div>
+<div><div class="sec-lbl">Belt distribution</div><div class="card" id="sd-belts"></div></div>
+</div>
+</div>
+
+<div id="cv-class-detail" style="display:none;">
+<div class="brow"><button class="bbtn" onclick="goClasses('overview')">Back</button><div><div class="btitle" id="cd-title">—</div><div class="bsub" id="cd-sub">—</div></div></div>
+<div class="lbody" id="cd-body"></div>
+</div>
+
+<div id="cv-register" style="display:none;">
+<div class="dbrow"><button class="dbbtn" id="reg-back">Back</button><div><div class="dbtitle" id="reg-title">—</div><div class="dbsub" id="reg-sub">—</div></div><button class="dbbtn" style="margin-left:auto;" onclick="showSummary('register')">Summary <span class="sum-badge" id="reg-sbadge">0</span></button></div>
+<div id="reg-body"></div>
+<div class="stats-bar"><div><div class="sbv2 grn" id="reg-P">0</div><div class="sbl3">Present</div></div><div><div class="sbv2 red" id="reg-A">0</div><div class="sbl3">Absent</div></div><div><div class="sbv2" id="reg-U">0</div><div class="sbl3">Unmarked</div></div><div style="margin-left:auto;"><button class="btn btn-grn" onclick="confirmRegister()">Confirm attendance</button></div></div>
+</div>
+
+<div id="cv-grade-roster" style="display:none;">
+<div class="dbrow"><button class="dbbtn" id="gr-back">Back to class</button><div><div class="dbtitle" id="gr-title">—</div><div class="dbsub">Present students only</div></div></div>
+<div class="modebar"><div class="mode-lbl"><div class="mdot"></div>Grade students mode</div><div style="display:flex;gap:7px;"><button class="btn btn-ghd" style="font-size:11px;display:flex;align-items:center;gap:5px;" onclick="showSummary('roster')">Summary <span class="sum-badge" id="rb-badge">0</span></button><button class="btn btn-ghd" style="font-size:11px;" onclick="exitGrading()">Exit</button><button class="btn btn-gold" id="btn-go-grade" style="font-size:11px;" disabled onclick="showGradeScreen()">Grade (<span id="sel-cnt">0</span>)</button></div></div>
+<div id="gr-body"></div>
+</div>
+
+<div id="cv-grade-screen" style="display:none;">
+<div class="dbrow"><button class="dbbtn" onclick="goClasses('grade-roster')">Back</button><div><div class="dbtitle">Select stripes</div><div class="dbsub" id="gs-sub">—</div></div></div>
+<div style="background:var(--dk);padding:14px 16px;" id="gs-body"></div>
+<div class="gfooter"><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:12px;color:rgba(255,255,255,0.5);">Selected: <strong style="color:#fac775;" id="award-cnt">0</strong></span><button class="btn btn-ghd" style="font-size:11px;display:flex;align-items:center;gap:5px;" onclick="showSummary('grade')">Session summary <span class="sum-badge" id="gb-badge">0</span></button></div><button class="btn btn-gold" id="btn-submit" disabled onclick="openStageConf()">Confirm to summary ›</button></div>
+</div>
+
+<div id="cv-summary" style="display:none;">
+<div class="brow"><button class="bbtn" id="sum-back">Back</button><div><div class="btitle">Grading summary</div><div class="bsub" id="sum-sub">—</div></div></div>
+<div class="lbody" id="sum-body"></div>
+</div>
+
+<div id="cv-belt-list" style="display:none;">
+<div class="brow"><button class="bbtn" onclick="goClasses('overview')">Back</button><div><div class="btitle">Belt promotions</div></div></div>
+<div class="lbody">
+<div><div class="sec-lbl">Challenge pending</div>
+<div class="pcard pnd" onclick="showPromo('daisy')" style="cursor:pointer;"><div class="pava" style="background:var(--gb);color:var(--gt);">DP</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;">Daisy Park</div><div style="font-size:11px;color:var(--tx3);margin-top:2px;">Kazan → Honoo · Set 11 March</div></div><span class="badge bg">Awaiting parent</span><span style="color:var(--tx3);">›</span></div>
+<div class="pcard pnd" onclick="showPromo('nina')" style="cursor:pointer;"><div class="pava" style="background:var(--gb);color:var(--gt);">NP</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;">Nina Patel</div><div style="font-size:11px;color:var(--tx3);margin-top:2px;">Shin Kage → Mushin · Set 14 March</div></div><span class="badge bg">Awaiting parent</span><span style="color:var(--tx3);">›</span></div>
+</div>
+<div><div class="sec-lbl">Ready to award</div>
+<div class="pcard rdy" onclick="showPromo('marcus')" style="cursor:pointer;"><div class="pava" style="background:var(--gnb);color:var(--grn);">MJ</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;">Marcus Johansson</div><div style="font-size:11px;color:var(--tx3);margin-top:2px;">Shin Mori → Kage · Confirmed 24 March</div></div><span class="badge bgg">Ready to award</span><span style="color:var(--tx3);">›</span></div>
+</div>
+</div>
+</div>
+
+<div id="cv-promo" style="display:none;">
+<div class="brow"><button class="bbtn" onclick="goClasses('belt-list')">Back</button><div><div class="btitle">Belt promotion</div><div class="bsub" id="promo-sub">—</div></div></div>
+<div class="lbody" id="promo-body"></div>
+</div>
+
+<div id="cv-award-success" style="display:none;">
+<div class="brow"><button class="bbtn" onclick="goClasses('overview')">Done</button></div>
+<div class="lbody"><div class="success-wrap"><div class="sgl"><div class="spip" style="background:#888888;"></div></div><div class="stitle">Belt awarded</div><div class="sname">Marcus Johansson</div><div class="ssub">Promoted to Kage Belt.<br>Logged to audit trail.</div><div class="sdet"><div class="sdrow"><div class="sdl">Belt awarded</div><div class="sdv">Kage Belt</div></div><div class="sdrow"><div class="sdl">Awarded by</div><div class="sdv">Harry Bovill</div></div><div class="sdrow"><div class="sdl">Date</div><div class="sdv">25 March 2026</div></div></div><div style="font-size:11px;color:rgba(255,255,255,0.25);margin-bottom:18px;">Saved to audit log · 25 March 2026</div><button class="btn btn-grn" onclick="goClasses('overview')">Done</button></div></div>
+</div>
+
+<div id="cv-receipt-detail" style="display:none;">
+<div class="brow"><button class="bbtn" id="rec-back">Back</button><div><div class="btitle">Grading receipt</div><div class="bsub" id="rec-sub">—</div></div></div>
+<div class="lbody" id="rec-body"></div>
+</div>
+
+</div>
+
+<div class="scr" id="scr-directory">
+<div class="lbody">
+<div class="dir-ctrl"><input class="dirsrch" id="dir-srch" placeholder="Search by name..." oninput="renderDir()"><div class="spills"><button class="sp on" id="sp-alpha" onclick="setDS('alpha')">A–Z</button><button class="sp" id="sp-class" onclick="setDS('class')">Class</button><button class="sp" id="sp-belt" onclick="setDS('belt')">Belt</button><button class="sp" id="sp-age" onclick="setDS('age')">Age</button></div></div>
+<div style="font-size:11px;color:var(--tx3);margin-bottom:8px;" id="dir-cnt"></div>
+<div class="card" style="padding:0;" id="dir-list"></div>
+</div>
+</div>
+
+<div class="scr" id="scr-overview">
+<div class="lbody">
+<div class="ov-tabs"><button class="ov-tab on" id="ovt-stats" onclick="setOvTab('stats')">Stats</button><button class="ov-tab" id="ovt-history" onclick="setOvTab('history')">Grading history</button></div>
+<div class="ov-panel on" id="ovp-stats">
+<div><div class="sec-lbl">Whole school</div><div class="g4"><div class="scard"><div class="sv">271</div><div class="sl">Students</div></div><div class="scard"><div class="sv">80%</div><div class="sl">Capacity</div></div><div class="scard"><div class="sv">88%</div><div class="sl">Attendance</div></div><div class="scard"><div class="sv">35%</div><div class="sl">Female</div></div></div></div>
+<div style="margin-top:14px;"><div class="sec-lbl">Growth</div><div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:12px;"><div><div style="font-size:20px;font-weight:700;">271</div><div style="font-size:12px;color:var(--tx2);">this term</div></div><div style="text-align:right;"><div style="font-size:18px;font-weight:700;color:var(--grn);">+37%</div><div style="font-size:11px;color:var(--tx2);">over 5 terms</div></div></div><div class="gbars" id="ov-growth"></div></div></div>
+<div style="margin-top:14px;"><div class="sec-lbl">Gender split</div><div class="card"><div style="height:9px;border-radius:5px;overflow:hidden;display:flex;gap:1px;margin-bottom:6px;"><div style="flex:65;background:#378ADD;border-radius:5px 0 0 5px;"></div><div style="flex:35;background:#D4537E;border-radius:0 5px 5px 0;"></div></div><div style="display:flex;justify-content:space-between;"><div style="font-size:12px;font-weight:700;color:#0C447C;">176 male · 65%</div><div style="font-size:12px;font-weight:700;color:#993556;">95 female · 35%</div></div></div></div>
+<div style="margin-top:14px;"><div class="sec-lbl">Belt distribution</div><div class="card" id="ov-belts"></div></div>
+</div>
+<div class="ov-panel" id="ovp-history">
+<div class="sec-lbl" style="margin-bottom:10px;">All grading sessions</div>
+<div id="ov-history-list"></div>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="bottom-nav">
+  <button class="nb active" id="nav-home" onclick="switchTab('home')"><div class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="nl">Home</div><span class="nbadge">3</span></button>
+  <button class="nb" id="nav-classes" onclick="switchTab('classes')"><div class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div class="nl">Classes</div></button>
+  <button class="nb" id="nav-directory" onclick="switchTab('directory')"><div class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg></div><div class="nl">Directory</div></button>
+  <button class="nb" id="nav-overview" onclick="switchTab('overview')"><div class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-6"/></svg></div><div class="nl">Overview</div></button>
+</div>
+</div>
+
+<div class="mov" id="stud-modal" onclick="closeStudModal(event)"><div class="mbox" id="stud-modal-box"></div></div>
+<div class="mov" id="stage-conf-modal"><div class="cmod"><div class="ctit">Add to grading summary?</div><div class="csub">Staged in summary only. Profiles update when you Award from summary.</div><div id="stage-list" style="margin-bottom:14px;max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;"></div><div class="cbtns"><button class="ccancel" onclick="document.getElementById('stage-conf-modal').classList.remove('op')">Cancel</button><button class="cconfirm" onclick="confirmStage()">Add to summary</button></div></div></div>
+<div class="mov" id="remove-conf-modal"><div class="cmod"><div class="ctit">Remove stripe?</div><div class="csub">This will remove the stripe from the summary.</div><div class="cbtns"><button class="ccancel" onclick="document.getElementById('remove-conf-modal').classList.remove('op')">Cancel</button><button class="cconfirm" style="background:#791F1F;" onclick="confirmRemove()">Remove</button></div></div></div>
+<div class="mov" id="award-all-modal"><div class="cmod"><div class="ctit">Award all stripes?</div><div class="csub">Student profiles will be updated and a permanent receipt created.</div><div id="award-all-prev" style="margin-bottom:14px;max-height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div><div class="cbtns"><button class="ccancel" onclick="document.getElementById('award-all-modal').classList.remove('op')">Cancel</button><button class="cconfirm" onclick="finalAwardAll()">Confirm — award stripes</button></div></div></div>
+<div class="mov" id="award-modal"><div class="cmod"><div class="ctit">Confirm belt award</div><div class="csub">Permanent — recorded in grading audit log.</div><div style="display:flex;align-items:center;gap:12px;background:var(--surf2);border-radius:var(--rs);padding:12px;margin-bottom:16px;"><div style="width:50px;height:15px;border-radius:3px;background:#888888;flex-shrink:0;"></div><div><div style="font-size:14px;font-weight:700;">Kage Belt</div><div style="font-size:12px;color:var(--tx2);">Marcus Johansson</div></div></div><div class="cbtns"><button class="ccancel" onclick="document.getElementById('award-modal').classList.remove('op')">Cancel</button><button class="cconfirm" onclick="awardBelt()">Confirm and award</button></div></div></div>
+
+<script>
+const BD=[{n:'Shiro Belt',c:'#e8e8e8',s:null},{n:'Kiiro Belt',c:'#f0c830',s:null},{n:'Taiyo Belt',c:'#e8702a',s:null},{n:'Kazan Belt',c:'#e8702a',s:'#cc2222'},{n:'Honoo Belt',c:'#c42020',s:null},{n:'Shin Honoo Belt',c:'#c42020',s:'#888888'},{n:'Mori Belt',c:'#2e7d22',s:null},{n:'Shin Mori Belt',c:'#2e7d22',s:'#888888'},{n:'Kage Belt',c:'#888888',s:null},{n:'Shin Kage Belt',c:'#888888',s:'#1a1a1a'},{n:'Mushin Belt',c:'#1a1a1a',s:'#f0f0f0'}];
+const EL=[{n:'Air',f:'#2a2a3a',st:'#ffffff',lf:'#f0f0f8',ls:'#3a3a6a',pb:'#EEEDFE',pt:'#3C3489',sym:'air'},{n:'Earth',f:'#1a4010',st:'#5acd30',lf:'#EAF3DE',ls:'#3B6D11',pb:'#EAF3DE',pt:'#27500A',sym:'earth'},{n:'Water',f:'#0e2260',st:'#4488ff',lf:'#E6F1FB',ls:'#185FA5',pb:'#E6F1FB',pt:'#0C447C',sym:'water'},{n:'Fire',f:'#6a1a05',st:'#ff6a20',lf:'#FAECE7',ls:'#993C1D',pb:'#FAECE7',pt:'#712B13',sym:'fire'}];
+const MY_IDS=[0,1,4,5,6,7,9,10,11];
+const CLS=[{id:0,label:'Ninja Yrs 1–3',day:'Monday',time:'16:15',mat:'Mat 1',type:'yrs1',enrolled:22,cap:28,att:91,belts:3,bd:[5,4,3,2,2,1,1,1,1,0,0]},{id:1,label:'Ninja Yrs 4–6',day:'Monday',time:'17:45',mat:'Mat 1',type:'yrs4',enrolled:18,cap:28,att:85,belts:2,bd:[3,3,3,2,2,2,2,1,0,0,0]},{id:2,label:'Ninja Yrs 1–3',day:'Tuesday',time:'16:15',mat:'Mat 1',type:'yrs1',enrolled:24,cap:28,att:88,belts:2,bd:[6,4,4,3,2,2,1,1,1,0,0]},{id:3,label:'Ninja Yrs 4–6',day:'Tuesday',time:'17:45',mat:'Mat 1',type:'yrs4',enrolled:20,cap:28,att:83,belts:1,bd:[4,4,3,3,2,2,1,1,0,0,0]},{id:4,label:'Ninja Yrs 1–3',day:'Wednesday',time:'16:15',mat:'Mat 1',type:'yrs1',enrolled:22,cap:28,att:91,belts:3,bd:[5,4,3,2,2,1,1,1,1,0,0],next:true},{id:5,label:'Ninja Yrs 4–6',day:'Wednesday',time:'17:45',mat:'Mat 1',type:'yrs4',enrolled:22,cap:28,att:89,belts:3,bd:[5,4,4,3,2,2,1,1,0,0,0]},{id:6,label:'Ninja Yrs 1–3',day:'Thursday',time:'16:15',mat:'Mat 1',type:'yrs1',enrolled:19,cap:28,att:86,belts:2,bd:[5,4,3,2,2,1,1,1,0,0,0]},{id:7,label:'Ninja Yrs 4–6',day:'Thursday',time:'17:45',mat:'Mat 1',type:'yrs4',enrolled:16,cap:28,att:80,belts:1,bd:[4,3,3,2,2,1,1,0,0,0,0]},{id:8,label:'Ninja Yrs 1–3',day:'Friday',time:'16:15',mat:'Mat 1',type:'yrs1',enrolled:21,cap:28,att:84,belts:2,bd:[5,4,4,3,2,2,1,0,0,0,0]},{id:9,label:'Ninja Yrs 1–3',day:'Saturday',time:'9:30',mat:'Mat 1',type:'yrs1',enrolled:28,cap:28,att:96,belts:5,bd:[7,5,4,4,3,2,2,1,0,0,0]},{id:10,label:'Ninja Yrs 4–6',day:'Saturday',time:'11:00',mat:'Mat 1',type:'yrs4',enrolled:22,cap:28,att:92,belts:3,bd:[5,4,4,3,2,2,2,1,0,0,0]},{id:11,label:'Ninja Yrs 1–3',day:'Saturday',time:'9:30',mat:'Mat 2',type:'yrs1',enrolled:22,cap:28,att:90,belts:3,bd:[5,4,3,3,2,2,1,1,0,0,0]},{id:12,label:'Ninja Yrs 4–6',day:'Saturday',time:'11:00',mat:'Mat 2',type:'yrs4',enrolled:17,cap:28,att:87,belts:2,bd:[4,3,3,2,2,1,1,1,0,0,0]},{id:13,label:'Ninja Yrs 1–3',day:'Saturday',time:'12:30',mat:'Mat 2',type:'yrs1',enrolled:23,cap:28,att:88,belts:2,bd:[5,4,4,3,3,2,1,1,0,0,0]}];
+const DAYS_O=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DAYS_S=['Mon','Tue','Wed','Thu','Fri','Sat'];
+const DATES=[23,24,25,26,27,28];
+const GD=[{t:'Aut 24',n:198},{t:'Spr 25',n:220},{t:'Sum 25',n:241},{t:'Aut 25',n:255},{t:'Spr 26',n:271}];
+const TIERS=[{key:'b',label:'Shokyu — Beginner',test:s=>s.bi<=3},{key:'i',label:'Chokyu — Intermediate',test:s=>s.bi>=4&&s.bi<=7},{key:'a',label:'Jokyu — Advanced',test:s=>s.bi>=8}];
+const FN=['Amir','Bella','Carlos','Daisy','Ethan','Fiona','George','Hana','Isaac','Jade','Kai','Lila','Marcus','Nina','Oliver','Priya','Quinn','Ravi','Sofia','Tom','Uma','Viktor','Wendy','Xander','Yasmin','Zoe'];
+const LN=['Hassan','Thompson','Diaz','Park','Clarke','Wright','Obi','Müller','Nwosu','Kim','Tanaka','Osei','Johansson','Patel','Smith','Sharma','Lee','Kumar','Rossi','Brown'];
+const PF=['Sarah','James','Emma','David','Layla','Michael','Chloe','Robert'];
+const PL=['Thompson','Clarke','Hassan','Patel','Kim','Osei','Wright','Johansson'];
+const MED=['Asthma — inhaler required','Nut allergy — EpiPen on site','None','None','None','None','None','None'];
+const SUP=['BSL interpreter sometimes helpful','None','None','None','None','None','None','None'];
+const AB=['#E6F1FB','#EAF3DE','#FAEEDA','#FAECE7','#EEEDFE'];
+const AT=['#0C447C','#27500A','#633806','#712B13','#3C3489'];
+const PAST=[
+  {id:'r1',date:'Monday 18 March 2026',classLabel:'Ninja Yrs 1–3 · Mat 1',day:'Monday',instructor:'Harry Bovill',total:8,awards:[{name:'Amir Hassan',elIdx:0,isHalf:false},{name:'Bella Thompson',elIdx:1,isHalf:false},{name:'Carlos Diaz',elIdx:2,isHalf:false},{name:'Carlos Diaz',elIdx:3,isHalf:false},{name:'Ethan Clarke',elIdx:0,isHalf:true},{name:'Fiona Wright',elIdx:1,isHalf:true},{name:'George Obi',elIdx:2,isHalf:false},{name:'Hana Müller',elIdx:0,isHalf:false}]},
+  {id:'r2',date:'Monday 11 March 2026',classLabel:'Ninja Yrs 4–6 · Mat 1',day:'Monday',instructor:'Harry Bovill',total:5,awards:[{name:'Isaac Nwosu',elIdx:1,isHalf:false},{name:'Jade Kim',elIdx:2,isHalf:false},{name:'Kai Tanaka',elIdx:3,isHalf:true},{name:'Lila Osei',elIdx:0,isHalf:false},{name:'Marcus Johansson',elIdx:1,isHalf:false}]},
+  {id:'r3',date:'Wednesday 5 March 2026',classLabel:'Ninja Yrs 1–3 · Mat 1',day:'Wednesday',instructor:'Harry Bovill',total:6,awards:[{name:'Nina Patel',elIdx:0,isHalf:false},{name:'Oliver Smith',elIdx:1,isHalf:false},{name:'Priya Sharma',elIdx:2,isHalf:true},{name:'Quinn Lee',elIdx:3,isHalf:false},{name:'Ravi Kumar',elIdx:0,isHalf:true},{name:'Sofia Rossi',elIdx:1,isHalf:false}]},
+];
+function sr(s){s=s%2147483647;if(s<=0)s+=2147483646;return()=>{s=s*16807%2147483647;return(s-1)/2147483646;};}
+let STUDS=[];
+function gen(){STUDS=[];let g=0;CLS.forEach(c=>{for(let i=0;i<c.enrolled;i++){const r=sr(g*1009+7);const y1=c.type==='yrs1';const age=y1?5+Math.floor(r()*4):9+Math.floor(r()*4);const bi=Math.floor(r()*(y1?6:11));const str=[0,1,2,3].map(()=>r()>0.5?1:0);const att=Array.from({length:12},(_,w)=>w<5?(r()>0.15?'P':'A'):'F');const ap=Math.round(att.filter(a=>a==='P').length/5*100);const pi=Math.floor(r()*PF.length),li=Math.floor(r()*PL.length);const ai=g%AB.length;const fn=FN[Math.floor(r()*FN.length)],ln=LN[Math.floor(r()*LN.length)];const tm=att[3]==='A'&&att[4]==='A';STUDS.push({id:g++,name:fn+' '+ln,initials:fn[0]+ln[0],age,bi,str,att,ap,cid:c.id,clabel:c.label,day:c.day,time:c.time,ab:AB[ai],at:AT[ai],pn:PF[pi]+' '+PL[li],ph:'07'+String(Math.floor(r()*9e8+1e8)),pe:(PF[pi][0]+PL[li]).toLowerCase()+'@email.com',en:PF[(pi+1)%PF.length]+' '+PL[(li+1)%PL.length],ep:'07'+String(Math.floor(r()*9e8+1e8)),med:MED[Math.floor(r()*MED.length)],sup:SUP[Math.floor(r()*SUP.length)],tm});g;}});}
+
+let curTab='home',curCls=4,cv='day',regSt={},grSel=new Set(),staged=[],receipts=[...PAST],pending=[],rmTgt=null,sumFrom='roster';
+function cc(p){return p>=80?'#639922':p>=65?'#BA7517':'#E24B4A';}
+function pip(c,s,w=22,h=8){return`<div class="bp" style="width:${w}px;height:${h}px;background:${c};">${s?`<div class="bps" style="background:${s};"></div>`:''}</div>`;}
+function esvg(sym,stroke,sz,op){const sw=1.6;let i='';if(sym==='air')i=`<path d="M8 14 Q14 9 20 14 Q14 19 8 14Z" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${op}"/><path d="M10 19 Q16 14 22 19" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${op*0.6}"/><circle cx="16" cy="14" r="1.2" fill="${stroke}" opacity="${op}"/>`;else if(sym==='earth')i=`<polygon points="16,8 24,22 8,22" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${op}"/><line x1="10" y1="18" x2="22" y2="18" stroke="${stroke}" stroke-width="${sw}" opacity="${op}"/>`;else if(sym==='water')i=`<path d="M16 8 C16 8 22 15 22 19 C22 22.3 19.3 25 16 25 C12.7 25 10 22.3 10 19 C10 15 16 8 16 8Z" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${op}"/><path d="M12 20 Q16 17 20 20" fill="none" stroke="${stroke}" stroke-width="${sw*0.8}" opacity="${op*0.7}"/>`;else if(sym==='fire')i=`<path d="M16 7 C16 7 21 13 21 18 C21 21.3 18.8 24 16 24 C13.2 24 11 21.3 11 18 C11 15 13 12 13 12 C13 12 14 15 16 15 C16 15 14 11 16 7Z" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${op}"/>`;return`<svg width="${sz}" height="${sz}" viewBox="0 0 32 32">${i}</svg>`;}
+function eico(ei,sz,half,lt){const e=EL[ei];const f=lt?e.lf:e.f,s=lt?e.ls:e.st;if(half)return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;border:1.5px solid ${s};position:relative;overflow:hidden;flex-shrink:0;"><div style="position:absolute;left:0;top:0;width:50%;height:100%;background:${f};"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">${esvg(e.sym,s,sz*0.72,0.85)}</div></div>`;return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;border:1.5px solid ${s};background:${f};flex-shrink:0;display:flex;align-items:center;justify-content:center;">${esvg(e.sym,s,sz*0.72,0.9)}</div>`;}
+function edot(ei,elig,half){const e=EL[ei];if(elig)return`<div class="edot" style="border:1.5px solid ${e.st};background:${half?'transparent':e.f};display:flex;align-items:center;justify-content:center;">${half?`<div style="position:absolute;left:0;top:0;width:50%;height:100%;background:${e.f};z-index:1;"></div>`:''}<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">${esvg(e.sym,e.st,12,0.9)}</div></div>`;return`<div class="edot" style="border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);">${esvg(e.sym,'rgba(255,255,255,0.15)',12,0.5)}</div>`;}
+function ring(p,col,sz){const r=(sz-4)/2,c=2*Math.PI*r,d=(p/100)*c;return`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="flex-shrink:0;"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="#e0e0d8" stroke-width="3"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="${col}" stroke-width="3" stroke-dasharray="${d.toFixed(1)} ${c.toFixed(1)}" stroke-dashoffset="${(c/4).toFixed(1)}" stroke-linecap="round"/></svg>`;}
+function bm(bd){return bd.map((n,i)=>{if(!n)return'';const b=BD[i],w=Math.max(6,Math.min(18,n*4));return`<div class="bpm" style="width:${w}px;background:${b.c};">${b.s?`<div class="bpms" style="background:${b.s};"></div>`:''}</div>`;}).join('');}
+function gb(){const mx=Math.max(...GD.map(g=>g.n));return GD.map((g,i)=>{const h=Math.round((g.n/mx)*50);return`<div class="gbw"><div class="gbval">${g.n}</div><div class="gbbar" style="height:${h}px;background:${i===GD.length-1?'#639922':'#C0DD97'};"></div><div class="gblbl">${g.t}</div></div>`;}).join('');}
+function bd(dist,mx){return BD.map((b,i)=>dist[i]>0?`<div style="display:flex;align-items:center;gap:9px;padding:5px 0;border-bottom:0.5px solid var(--bdr);">${pip(b.c,b.s,21,7)}<div style="font-size:12px;flex:1;">${b.n}</div><div style="flex:2;height:5px;background:var(--surf2);border-radius:3px;overflow:hidden;"><div style="width:${Math.round(dist[i]/mx*100)}%;height:100%;background:#378ADD;border-radius:3px;"></div></div><div style="font-size:12px;min-width:18px;text-align:right;">${dist[i]}</div></div>`:'').join('');}
+function getTier(s){return s.bi<=3?'b':s.bi<=7?'i':'a';}
+function eligSet(s){const t=getTier(s),e=new Set();if(t==='b'){for(let i=0;i<4;i++)if(s.str[i]<1)e.add(i);}else if(t==='i'){const ah=s.str.every(v=>v>=0.5);if(!ah){for(let i=0;i<4;i++)if(s.str[i]<0.5)e.add(i);}else{for(let i=0;i<4;i++)if(s.str[i]<1)e.add(i);}}else{for(let i=0;i<4;i++){if(s.str[i]<1){e.add(i);break;}}}return e;}
+function eligList(s){const t=getTier(s),r=[];if(t==='b'){for(let i=0;i<4;i++)if(s.str[i]<1)r.push({ei:i,half:false,key:`${i}-f`});}else if(t==='i'){const ah=s.str.every(v=>v>=0.5);if(!ah){for(let i=0;i<4;i++)if(s.str[i]<0.5)r.push({ei:i,half:true,key:`${i}-h`});}else{for(let i=0;i<4;i++)if(s.str[i]<1)r.push({ei:i,half:false,key:`${i}-f`});}}else{for(let i=0;i<4;i++){if(s.str[i]<1){r.push({ei:0,half:false,key:`a-${i}`});break;}}}return r;}
+function ubadges(){const t=staged.length;['rb-badge','gb-badge','reg-sbadge'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=t;});}
+
+const TABS=['home','classes','directory','overview'];
+function switchTab(t){curTab=t;TABS.forEach(x=>{document.getElementById('scr-'+x).classList.toggle('on',x===t);document.getElementById('nav-'+x).classList.toggle('active',x===t);});const tt={home:'Good evening, Harry',classes:'Classes',directory:'Directory',overview:'Overview'};const ts={home:'Wednesday 25 March 2026',classes:'Spring term 2026',directory:'Whole school',overview:'Spring term 2026'};document.getElementById('tb-title').textContent=tt[t];document.getElementById('tb-sub').textContent=ts[t];if(t==='directory')renderDir();if(t==='overview')renderOvHist();if(t!=='overview'){const rp=document.getElementById('ovp-receipt');if(rp)rp.style.display='none';}}
+
+const CV=['overview','school-detail','class-detail','register','grade-roster','grade-screen','summary','belt-list','promo','award-success','receipt-detail'];
+function goClasses(v){CV.forEach(x=>{const e=document.getElementById('cv-'+x);if(e)e.style.display='none';});const t=document.getElementById('cv-'+v);if(t)t.style.display='block';if(v==='overview')renderCL();}
+function openClass(id){curCls=id;switchTab('classes');goClasses('class-detail');renderCD(id);}
+
+function setCV(v){cv=v;['day','type','mine'].forEach(k=>document.getElementById('tog-'+k).classList.toggle('on',k===v));renderCL();}
+function renderCL(){
+  const el=document.getElementById('class-list');el.innerHTML='';
+  let groups=[];
+  if(cv==='mine'){const mine=CLS.filter(c=>MY_IDS.includes(c.id));DAYS_O.forEach(day=>{const cls=mine.filter(c=>c.day===day);if(cls.length)groups.push({label:day,items:cls,sd:false});});}
+  else if(cv==='day'){DAYS_O.forEach(day=>{const cls=CLS.filter(c=>c.day===day);if(cls.length)groups.push({label:day,items:cls,sd:false});});}
+  else{['yrs1','yrs4'].forEach(type=>{const cls=[...CLS].filter(c=>c.type===type).sort((a,b)=>DAYS_O.indexOf(a.day)-DAYS_O.indexOf(b.day));groups.push({label:type==='yrs1'?'Yrs 1–3':'Yrs 4–6',items:cls,sd:true});});}
+  groups.forEach(g=>{
+    const lel=document.createElement('div');lel.className='sec-lbl';lel.style.cssText='margin:0 0 8px;';lel.textContent=g.label;el.appendChild(lel);
+    g.items.forEach(cls=>{
+      const pct=Math.round(cls.enrolled/cls.cap*100);
+      const mine=MY_IDS.includes(cls.id);
+      const card=document.createElement('div');card.className='cc'+(cls.next?' nxt':'')+(mine&&cv!=='mine'?' mine':'');
+      card.onclick=()=>openClass(cls.id);
+      const meta=g.sd?`${cls.day} · ${cls.time} · ${cls.mat}`:cls.time;
+      const tag=cls.type==='yrs1'?`<span class="badge bgb">Yrs 1–3</span>`:`<span class="badge bgg">Yrs 4–6</span>`;
+      const mb=mine&&cv!=='mine'?`<span class="my-badge">My class</span>`:'';
+      card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div><div class="ccn">${cls.label} · ${cls.mat}${mb}</div><div class="ccm">${meta}</div></div>${tag}</div><div class="ccstats"><div><div class="csv">${cls.enrolled}<span style="font-size:11px;font-weight:400;color:var(--tx3);">/${cls.cap}</span></div><div class="csl">Students</div><div class="capbar"><div class="capfill" style="width:${pct}%;background:${cc(pct)};"></div></div><div style="font-size:10px;color:var(--tx2);margin-top:2px;">${cls.cap-cls.enrolled} free</div></div><div><div class="csv">${cls.att}%</div><div class="csl">Attendance</div></div><div><div class="csl" style="margin-bottom:4px;">Belts</div><div class="beltmini">${bm(cls.bd)}</div><div style="font-size:10px;color:var(--tx2);margin-top:3px;">${cls.belts} this term</div></div></div><div class="cc-foot"><div style="width:17px;height:17px;border-radius:50%;background:var(--bb);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--bt);">HB</div>Harry Bovill<span style="margin-left:auto;color:var(--tx3);">›</span></div>`;
+      el.appendChild(card);
+    });
+  });
+}
+
+function renderCD(id){
+  const cls=CLS.find(c=>c.id===id);curCls=id;
+  const pct=Math.round(cls.enrolled/cls.cap*100);const mx=Math.max(...cls.bd,1);
+  const studs=STUDS.filter(s=>s.cid===id);
+  const hasP=studs.some(s=>regSt[s.id]==='P');
+  const stg=staged.filter(a=>studs.some(s=>s.id===a.studId)).length;
+  const recs=receipts.filter(r=>r.classLabel===`${cls.label} · ${cls.mat}`&&r.day===cls.day);
+  document.getElementById('cd-title').textContent=`${cls.label} · ${cls.mat}`;
+  document.getElementById('cd-sub').textContent=`${cls.day} ${cls.time} · Harry Bovill`;
+  document.getElementById('cd-body').innerHTML=`
+    <div><div class="sec-lbl">Summary</div>
+      <div class="g3">
+        <div class="card" style="display:flex;align-items:center;gap:10px;">${ring(pct,cc(pct),44)}<div><div style="font-size:18px;font-weight:700;">${cls.enrolled}/${cls.cap}</div><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;">Students</div><div style="font-size:11px;color:var(--tx2);">${cls.cap-cls.enrolled} free</div></div></div>
+        <div class="card" style="display:flex;align-items:center;gap:10px;">${ring(cls.att,'#378ADD',44)}<div><div style="font-size:18px;font-weight:700;">${cls.att}%</div><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;">Attendance</div></div></div>
+        <div class="card"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;margin-bottom:5px;">Belts</div><div style="font-size:18px;font-weight:700;">${cls.belts}</div><div class="beltmini" style="margin-top:6px;">${bm(cls.bd)}</div></div>
+      </div>
+    </div>
+    <div><div class="sec-lbl">Belt distribution</div><div class="card">${bd(cls.bd,mx)}</div></div>
+    <div><div class="sec-lbl">Performance — last 3 gradings</div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:11px;padding:7px 0;border-bottom:0.5px solid var(--bdr);"><div style="width:11px;height:11px;border-radius:50%;background:#639922;flex-shrink:0;"></div><div style="flex:1;font-size:13px;">Performing well</div><div style="flex:2;height:7px;background:var(--surf2);border-radius:4px;overflow:hidden;"><div style="width:50%;height:100%;background:#639922;border-radius:4px;"></div></div><div style="font-size:13px;font-weight:700;min-width:22px;text-align:right;color:#27500A;">7</div></div>
+        <div style="display:flex;align-items:center;gap:11px;padding:7px 0;border-bottom:0.5px solid var(--bdr);"><div style="width:11px;height:11px;border-radius:50%;background:#BA7517;flex-shrink:0;"></div><div style="flex:1;font-size:13px;">Average</div><div style="flex:2;height:7px;background:var(--surf2);border-radius:4px;overflow:hidden;"><div style="width:29%;height:100%;background:#BA7517;border-radius:4px;"></div></div><div style="font-size:13px;font-weight:700;min-width:22px;text-align:right;color:#854F0B;">4</div></div>
+        <div style="display:flex;align-items:center;gap:11px;padding:7px 0;"><div style="width:11px;height:11px;border-radius:50%;background:#E24B4A;flex-shrink:0;"></div><div style="flex:1;font-size:13px;">Underperforming</div><div style="flex:2;height:7px;background:var(--surf2);border-radius:4px;overflow:hidden;"><div style="width:21%;height:100%;background:#E24B4A;border-radius:4px;"></div></div><div style="font-size:13px;font-weight:700;min-width:22px;text-align:right;color:#791F1F;">3</div></div>
+      </div>
+    </div>
+    <div><div class="sec-lbl">Consecutive absences</div><div class="alrt red"><div class="adot red"></div><div><div class="atit red">Kai Tanaka — missed last 2</div></div></div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-gh" style="flex:1;" onclick="openRegister(${id},false)">Class register</button>
+      <button class="btn btn-gold" style="flex:1;" ${hasP?'':'disabled'} onclick="${hasP?'openGradeRoster('+id+')':''}">Start grading ${hasP?'›':'🔒'}</button>
+    </div>
+    <div style="margin-top:8px;">
+      <button class="btn" style="width:100%;padding:9px;display:flex;align-items:center;justify-content:center;gap:8px;${stg?'background:var(--gnb);border:1px solid #3B6D11;color:var(--grn);font-weight:700;cursor:pointer;':'background:var(--surf2);border:0.5px solid var(--bdr);color:var(--tx3);opacity:0.55;cursor:default;'}" ${stg?'onclick="showSummary(\'class-detail\')"':''}>
+        Session summary ${stg?'<span class="sum-badge" style="background:#2a6010;">'+stg+'</span>':'<span style="font-size:10px;font-weight:400;">(start grading to activate)</span>'}
+      </button>
+    </div>
+    ${!hasP?'<div style="font-size:11px;color:var(--tx3);text-align:center;margin-top:4px;">Take register first to unlock grading</div>':''}
+    ${recs.length?`<div><div class="sec-lbl">Previous grading sessions</div>${recs.map(r=>`<div class="receipt" onclick="openRec('${r.id}','class-detail')"><div class="rec-hdr"><div><div class="rec-date">${r.date}</div><div class="rec-class">${r.classLabel}</div></div><div class="rec-total">${r.total} stripes</div></div><div class="rec-els">${[0,1,2,3].map(ei=>{const fw=r.awards.filter(a=>a.elIdx===ei&&!a.isHalf).length;const hw=r.awards.filter(a=>a.elIdx===ei&&a.isHalf).length;if(!fw&&!hw)return'';return`<div class="rec-el">${eico(ei,13,false,true)}<span>${EL[ei].n}: ${fw?fw+' full':''}${fw&&hw?', ':''}${hw?hw+' half':''}</span></div>`;}).join('')}</div></div>`).join('')}</div>`:''}`;
+}
+
+function openRegister(id,fh){curCls=id;const cls=CLS.find(c=>c.id===id);const studs=STUDS.filter(s=>s.cid===id);studs.forEach(s=>{if(!regSt[s.id])regSt[s.id]='U';});document.getElementById('reg-title').textContent=`${cls.label} · ${cls.mat}`;document.getElementById('reg-sub').textContent=`${cls.day} ${cls.time}`;document.getElementById('reg-back').onclick=()=>fh?switchTab('home'):goClasses('class-detail');switchTab('classes');goClasses('register');renderReg(id);ubadges();}
+function renderReg(id){
+  const studs=STUDS.filter(s=>s.cid===id).sort((a,b)=>a.bi-b.bi);const body=document.getElementById('reg-body');body.innerHTML='';
+  let P=0,A=0,U=0;studs.forEach(s=>{if(regSt[s.id]==='P')P++;else if(regSt[s.id]==='A')A++;else U++;});
+  document.getElementById('reg-P').textContent=P;document.getElementById('reg-A').textContent=A;document.getElementById('reg-U').textContent=U;
+  TIERS.forEach(t=>{
+    const ts=studs.filter(t.test);if(!ts.length)return;
+    const hdr=document.createElement('div');hdr.className='thdr';hdr.innerHTML=`<span class="tlbl">${t.label}</span><div class="tline"></div><span class="tcnt">${ts.length}</span>`;body.appendChild(hdr);
+    ts.forEach(s=>{
+      const b=BD[s.bi],st=regSt[s.id]||'U';
+      const adots=s.att.map(a=>`<div style="width:9px;height:9px;border-radius:50%;flex-shrink:0;" class="dot-${a}"></div>`).join('');
+      const mb=s.tm?`<span style="font-size:9px;padding:2px 5px;border-radius:3px;background:var(--rb);color:var(--rt);font-weight:700;margin-left:5px;">2 missed</span>`:'';
+      const row=document.createElement('div');row.className=`rrow ${st==='U'?'':st}`;
+      row.innerHTML=`${pip(b.c,b.s,22,8)}<div style="flex:1;"><div class="rname">${s.name}${mb}</div><div class="att-belt-sub" style="font-size:10px;color:rgba(255,255,255,0.35);">${b.n} · Age ${s.age}</div></div><div class="reg-adots">${adots}</div><div class="att-toggle"><button class="att-btn P ${st==='P'?'on':''}" onclick="markAtt(${s.id},'P',${id})">Present</button><button class="att-btn A ${st==='A'?'on':''}" onclick="markAtt(${s.id},'A',${id})">Absent</button></div>`;
+      body.appendChild(row);
+    });
+  });
+}
+function markAtt(sid,val,cid){regSt[sid]=regSt[sid]===val?'U':val;renderReg(cid);}
+function confirmRegister(){goClasses('class-detail');renderCD(curCls);}
+
+function openGradeRoster(id){curCls=id;grSel.clear();pending=[];goClasses('grade-roster');renderGR();}
+function exitGrading(){goClasses('class-detail');renderCD(curCls);}
+function renderGR(){
+  const cls=CLS.find(c=>c.id===curCls);document.getElementById('gr-title').textContent=`${cls.label} · ${cls.day}`;
+  document.getElementById('gr-back').onclick=()=>goClasses('class-detail');
+  const ps=STUDS.filter(s=>s.cid===curCls&&regSt[s.id]==='P').sort((a,b)=>a.bi-b.bi);
+  const body=document.getElementById('gr-body');body.innerHTML='';
+  TIERS.forEach(t=>{
+    const ts=ps.filter(t.test);if(!ts.length)return;
+    const hdr=document.createElement('div');hdr.className='thdr';hdr.innerHTML=`<span class="tlbl">${t.label}</span><div class="tline"></div><span class="tcnt">${ts.length}</span>`;body.appendChild(hdr);
+    ts.forEach(s=>{
+      const b=BD[s.bi],isSel=grSel.has(s.id);
+      const es=eligSet(s),ah=s.bi>=4&&s.bi<=7&&s.str.every(v=>v>=0.5);
+      const dots=[0,1,2,3].map(i=>edot(i,es.has(i),es.has(i)&&s.bi>=4&&s.bi<=7&&!ah&&s.str[i]<0.5)).join('');
+      const row=document.createElement('div');row.className=`grow${isSel?' sel':''}`;
+      row.onclick=()=>{grSel.has(s.id)?grSel.delete(s.id):grSel.add(s.id);renderGR();usc();}
+      row.innerHTML=`<div class="selbox${isSel?' chk':''}"><div class="chkmark"></div></div>${pip(b.c,b.s,24,8)}<div style="flex:1;"><div class="gname">${s.name}</div><div class="gbelt">${b.n}</div></div><div class="edots">${dots}</div>`;
+      body.appendChild(row);
+    });
+  });
+  usc();ubadges();
+}
+function usc(){const n=grSel.size;document.getElementById('sel-cnt').textContent=n;document.getElementById('btn-go-grade').disabled=n===0;}
+
+function showGradeScreen(){pending=[];document.getElementById('gs-sub').textContent=grSel.size+' student'+(grSel.size!==1?'s':'')+' selected';goClasses('grade-screen');renderGS();}
+function renderGS(){
+  const body=document.getElementById('gs-body');body.innerHTML='';
+  grSel.forEach(sid=>{
+    const s=STUDS.find(x=>x.id===sid);const b=BD[s.bi];const elist=eligList(s);
+    const card=document.createElement('div');card.className='gcard';
+    let ctrl='';
+    if(!elist.length)ctrl=`<div class="no-elig">No eligible stripes</div>`;
+    else{
+      const t=getTier(s),ah=t==='i'&&s.str.every(v=>v>=0.5);
+      const note=t==='i'&&!ah?`<div style="font-size:11px;color:#ba7517;margin-top:8px;">Full stripes unlock once all first halves earned</div>`:'';
+      const btns=elist.map(e=>{
+        const el=EL[e.ei];const isSel=pending.some(p=>p.studId===sid&&p.key===e.key);const inStg=staged.some(a=>a.studId===sid&&a.key===e.key);
+        const safeKey=e.key.replace(/'/g,'\\'+'\'');
+        const onclk=inStg?'':('tgPend('+sid+',\''+safeKey+'\','+e.ei+','+e.half+')');
+        return`<div class="stripe-btn${isSel?' sel':''}" style="${inStg?'opacity:.4;cursor:default;':''}" onclick="${onclk}">${eico(e.ei,32,e.half,false)}<div class="sblbl">${e.half?el.n+'<br>1st half':el.n}${inStg?'<br><span style="color:#c0dd97;font-size:10px;font-weight:700;">In summary</span>':isSel?'<br><span style="color:#fac775;font-size:10px;font-weight:700;">Selected</span>':''}</div></div>`;
+      }).join('');
+      ctrl=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,0.3);margin-bottom:9px;">Eligible to award</div><div style="display:flex;gap:8px;flex-wrap:wrap;">${btns}</div>${note}`;
+    }
+    card.innerHTML=`<div style="display:flex;align-items:center;gap:11px;margin-bottom:11px;">${pip(b.c,b.s,25,9)}<div><div style="font-size:13px;font-weight:700;color:#f0f0f0;">${s.name}</div><div style="font-size:11px;color:rgba(255,255,255,0.4);">${b.n}</div></div></div>${ctrl}`;
+    body.appendChild(card);
+  });
+  upui();
+}
+function tgPend(sid,key,ei,isHalf){const idx=pending.findIndex(p=>p.studId===sid&&p.key===key);if(idx>=0)pending.splice(idx,1);else{const s=STUDS.find(x=>x.id===sid);pending.push({studId:sid,name:s.name,elIdx:ei,isHalf:!!isHalf,key});}renderGS();}
+function upui(){const t=pending.length;document.getElementById('award-cnt').textContent=t;document.getElementById('btn-submit').disabled=t===0;}
+
+function openStageConf(){const list=document.getElementById('stage-list');list.innerHTML='';pending.forEach(a=>{const el=EL[a.elIdx];const item=document.createElement('div');item.style.cssText='display:flex;align-items:center;gap:9px;padding:7px 10px;background:var(--surf2);border-radius:var(--rs);border:0.5px solid var(--bdr);';item.innerHTML=`${eico(a.elIdx,17,a.isHalf,false)}<span style="font-size:12px;flex:1;font-weight:700;">${a.name}</span><span style="font-size:11px;color:var(--gt);">${el.n}${a.isHalf?' — 1st half':' stripe'}</span>`;list.appendChild(item);});document.getElementById('stage-conf-modal').classList.add('op');}
+function confirmStage(){document.getElementById('stage-conf-modal').classList.remove('op');staged.push(...pending);pending=[];ubadges();showSummary('grade');}
+
+function showSummary(from){
+  sumFrom=from;
+  const byEl=[0,1,2,3].map(()=>({full:[],half:[]}));
+  staged.forEach(a=>{(a.isHalf?byEl[a.elIdx].half:byEl[a.elIdx].full).push(a);});
+  const cls=CLS.find(c=>c.id===curCls);
+  document.getElementById('sum-sub').textContent=staged.length>0?`${staged.length} stripe${staged.length!==1?'s':''} staged · ${cls.label} · ${cls.day}`:`${cls.label} · ${cls.day} · No stripes staged yet`;
+  const bb=document.getElementById('sum-back');
+  const bls={roster:'Back to roster',grade:'Back to grading',register:'Back to register','class-detail':'Back to class'};
+  bb.textContent=bls[from]||'Back';
+  bb.onclick=()=>{if(from==='roster')goClasses('grade-roster');else if(from==='grade')goClasses('grade-screen');else if(from==='register')goClasses('register');else{goClasses('class-detail');renderCD(curCls);}};
+  const body=document.getElementById('sum-body');body.innerHTML='';
+  [0,1,2,3].forEach(i=>{
+    const el=EL[i],data=byEl[i];const sec=document.createElement('div');sec.className='el-sec';
+    const pills=[data.full.length?`<span class="el-pill" style="background:${el.pb};color:${el.pt};">${data.full.length} full</span>`:'',data.half.length?`<span class="el-pill" style="background:${el.pb};color:${el.pt};opacity:.7;">${data.half.length} half</span>`:'',(!data.full.length&&!data.half.length)?`<span style="font-size:11px;color:var(--tx3);">None staged</span>`:''].join('');
+    let rows='';
+    [...data.full,...data.half].forEach(a=>{rows+=`<div class="el-srow">${eico(i,20,a.isHalf,true)}<div class="el-sname">${a.name}</div><span class="stype" style="background:${el.pb};color:${el.pt};">${a.isHalf?'1st half':'Full'}</span><button class="rem-btn" onclick="openRm(${a.studId},'${a.key}')">Remove</button></div>`;});
+    if(!rows)rows=`<div class="el-empty">No ${el.n.toLowerCase()} stripes staged</div>`;
+    sec.innerHTML=`<div class="el-hdr">${eico(i,28,false,true)}<div class="el-name">${el.n} stripes</div><div style="display:flex;gap:5px;">${pills}</div></div>${rows}`;
+    body.appendChild(sec);
+  });
+  const tF=staged.filter(a=>!a.isHalf).length,tH=staged.filter(a=>a.isHalf).length;
+  const tot=document.createElement('div');tot.className='tot-card';
+  tot.innerHTML=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin-bottom:10px;">Session totals</div><div class="trow2"><div class="tlbl2">Full stripes staged</div><div class="tval">${tF}</div></div><div class="trow2"><div class="tlbl2">Half stripes staged</div><div class="tval">${tH}</div></div><div class="grand"><div class="glbl">Total staged</div><div class="gval">${tF+tH}</div></div>`;
+  body.appendChild(tot);
+  if(staged.length>0){const ab=document.createElement('div');ab.style.cssText='margin-top:4px;';ab.innerHTML=`<div style="background:#0a2e06;border:1px solid #2a6010;border-radius:var(--r);padding:14px 15px;margin-bottom:10px;"><div style="font-size:13px;font-weight:700;color:#c0dd97;margin-bottom:5px;">End of class — award stripes</div><div style="font-size:12px;color:rgba(192,221,151,0.7);line-height:1.6;">Tapping below will officially record all staged stripes, update student profiles and create a permanent grading receipt. This cannot be undone.</div></div><button class="btn btn-grn btn-full" style="font-size:15px;padding:14px;letter-spacing:0.01em;" onclick="openAwardAll()">✓ Award all ${staged.length} stripe${staged.length!==1?'s':''} — end session</button>`;body.appendChild(ab);}
+  else{const em=document.createElement('div');em.innerHTML=`<div style="font-size:12px;color:var(--tx3);text-align:center;padding:16px;background:var(--surf);border:0.5px solid var(--bdr);border-radius:var(--r);">No stripes staged yet.<br><span style="color:var(--tx2);">Go to Grade students, select stripes and confirm them to add to this summary.</span></div>`;body.appendChild(em);}
+  goClasses('summary');
+}
+
+function openRm(sid,key){rmTgt={sid,key};document.getElementById('remove-conf-modal').classList.add('op');}
+function confirmRemove(){if(rmTgt){staged=staged.filter(a=>!(a.studId===rmTgt.sid&&a.key===rmTgt.key));rmTgt=null;}document.getElementById('remove-conf-modal').classList.remove('op');ubadges();showSummary(sumFrom);}
+
+function openAwardAll(){const prev=document.getElementById('award-all-prev');prev.innerHTML='';staged.forEach(a=>{const el=EL[a.elIdx];const item=document.createElement('div');item.style.cssText='display:flex;align-items:center;gap:8px;padding:6px 9px;background:var(--surf2);border-radius:var(--rs);border:0.5px solid var(--bdr);';item.innerHTML=`${eico(a.elIdx,16,a.isHalf,false)}<span style="font-size:12px;flex:1;font-weight:600;">${a.name}</span><span style="font-size:11px;color:var(--gt);">${el.n}${a.isHalf?' — 1st half':' stripe'}</span>`;prev.appendChild(item);});document.getElementById('award-all-modal').classList.add('op');}
+function finalAwardAll(){
+  document.getElementById('award-all-modal').classList.remove('op');
+  const cls=CLS.find(c=>c.id===curCls);
+  const savedCls=curCls;
+  const nr={id:'r_'+Date.now(),date:'Wednesday 25 March 2026',classLabel:`${cls.label} · ${cls.mat}`,day:cls.day,instructor:'Harry Bovill',total:staged.length,awards:staged.map(a=>({name:a.name,elIdx:a.elIdx,isHalf:a.isHalf}))};
+  receipts.unshift(nr);staged=[];pending=[];grSel.clear();ubadges();
+  // Show receipt in classes tab receipt-detail view
+  document.getElementById('rec-sub').textContent=`${nr.date} · ${nr.classLabel}`;
+  document.getElementById('rec-back').onclick=()=>{curCls=savedCls;goClasses('class-detail');renderCD(savedCls);};
+  document.getElementById('rec-body').innerHTML=buildRecHTML(nr.id);
+  switchTab('classes');goClasses('receipt-detail');
+}
+function buildRecHTML(id){
+  const rec=receipts.find(r=>r.id===id);
+  if(!rec)return'<div style="padding:20px;color:var(--tx3);">Receipt not found.</div>';
+  const byEl=[0,1,2,3].map(()=>({full:[],half:[]}));
+  rec.awards.forEach(a=>{(a.isHalf?byEl[a.elIdx].half:byEl[a.elIdx].full).push(a.name);});
+  return`<div class="card"><div class="irow"><span class="il">Date</span><span class="iv">${rec.date}</span></div><div class="irow"><span class="il">Class</span><span class="iv">${rec.classLabel}</span></div><div class="irow"><span class="il">Instructor</span><span class="iv">${rec.instructor}</span></div><div class="irow"><span class="il">Total stripes</span><span class="iv" style="color:var(--grn);">${rec.total}</span></div></div>`
+  +[0,1,2,3].map(i=>{const el=EL[i],d=byEl[i];if(!d.full.length&&!d.half.length)return'';return`<div class="el-sec"><div class="el-hdr">${eico(i,26,false,true)}<div class="el-name">${el.n} stripes</div><div style="display:flex;gap:5px;">${d.full.length?`<span class="el-pill" style="background:${el.pb};color:${el.pt};">${d.full.length} full</span>`:''}${d.half.length?`<span class="el-pill" style="background:${el.pb};color:${el.pt};opacity:.7;">${d.half.length} half</span>`:''}</div></div>${[...d.full.map(n=>`<div class="el-srow">${eico(i,18,false,true)}<div class="el-sname">${n}</div><span class="stype" style="background:${el.pb};color:${el.pt};">Full stripe</span></div>`),...d.half.map(n=>`<div class="el-srow">${eico(i,18,true,true)}<div class="el-sname">${n}</div><span class="stype" style="background:${el.pb};color:${el.pt};opacity:.8;">1st half</span></div>`)].join('')}</div>`;}).join('')
+  +`<div style="padding:12px;background:var(--gnb);border:0.5px solid #3B6D11;border-radius:var(--r);font-size:12px;color:var(--grn);">Officially awarded · Logged to audit trail · Student profiles updated</div>`;
+}
+
+function openRec(id,bt){
+  const rec=receipts.find(r=>r.id===id);
+  if(!rec)return;
+  if(bt==='overview'){
+    // Stay on overview tab — show receipt in a dedicated overview receipt panel
+    switchTab('overview');
+    // Inject a receipt detail view into overview
+    const ovMain=document.querySelector('#scr-overview .lbody');
+    // Show receipt inline by switching overview to show a receipt panel
+    document.getElementById('ovp-stats').style.display='none';
+    document.getElementById('ovp-history').style.display='none';
+    let recPanel=document.getElementById('ovp-receipt');
+    if(!recPanel){recPanel=document.createElement('div');recPanel.id='ovp-receipt';recPanel.className='ov-panel';ovMain.appendChild(recPanel);}
+    recPanel.style.display='block';
+    recPanel.innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><button class="bbtn" onclick="closeOvReceipt()">Back</button><div><div class="btitle">Grading receipt</div><div class="bsub">${rec.date} · ${rec.classLabel}</div></div></div>`+buildRecHTML(id);
+    // Update tab UI to show none selected
+    document.getElementById('ovt-stats').classList.remove('on');
+    document.getElementById('ovt-history').classList.remove('on');
+  } else {
+    // Classes tab receipt detail
+    const savedCls=curCls;
+    document.getElementById('rec-sub').textContent=`${rec.date} · ${rec.classLabel}`;
+    document.getElementById('rec-back').onclick=()=>{curCls=savedCls;goClasses('class-detail');renderCD(savedCls);};
+    document.getElementById('rec-body').innerHTML=buildRecHTML(id);
+    switchTab('classes');goClasses('receipt-detail');
+  }
+}
+
+function closeOvReceipt(){
+  const recPanel=document.getElementById('ovp-receipt');
+  if(recPanel)recPanel.style.display='none';
+  setOvTab('history');
+}
+
+function setOvTab(t){
+  ['stats','history'].forEach(x=>{document.getElementById('ovt-'+x).classList.toggle('on',x===t);document.getElementById('ovp-'+x).classList.toggle('on',x===t);});
+  const rp=document.getElementById('ovp-receipt');if(rp)rp.style.display='none';
+  if(t==='history')renderOvHist();
+}
+function renderOvHist(){const el=document.getElementById('ov-history-list');el.innerHTML='';if(!receipts.length){el.innerHTML='<div style="font-size:12px;color:var(--tx3);font-style:italic;">No grading sessions recorded yet.</div>';return;}receipts.forEach(r=>{const div=document.createElement('div');div.className='receipt';div.onclick=()=>openRec(r.id,'overview');div.innerHTML=`<div class="rec-hdr"><div><div class="rec-date">${r.date}</div><div class="rec-class">${r.classLabel} · ${r.instructor}</div></div><div class="rec-total">${r.total} stripes</div></div><div class="rec-els">${[0,1,2,3].map(ei=>{const fw=r.awards.filter(a=>a.elIdx===ei&&!a.isHalf).length;const hw=r.awards.filter(a=>a.elIdx===ei&&a.isHalf).length;if(!fw&&!hw)return'';return`<div class="rec-el">${eico(ei,13,false,true)}<span>${EL[ei].n}: ${fw?fw+' full':''}${fw&&hw?', ':''}${hw?hw+' half':''}</span></div>`;}).join('')}</div>`;el.appendChild(div);});}
+
+function showPromo(who){
+  const names={daisy:'Daisy Park',nina:'Nina Patel',marcus:'Marcus Johansson'};
+  document.getElementById('promo-sub').textContent=names[who];
+  const body=document.getElementById('promo-body');
+  if(who==='marcus'){
+    body.innerHTML=`<div><div class="sec-lbl">Promotion</div><div class="bt-trans"><div class="bt-side"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;margin-bottom:6px;">Current</div><div class="bt-pip" style="background:#2e7d22;"><div class="bt-str" style="background:#888888;"></div></div><div style="font-size:13px;font-weight:700;margin-top:6px;">Shin Mori Belt</div></div><div style="font-size:24px;color:var(--tx3);">→</div><div class="bt-side"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;margin-bottom:6px;">Next</div><div class="bt-pip" style="background:#888888;"></div><div style="font-size:13px;font-weight:700;margin-top:6px;">Kage Belt</div></div></div><div style="text-align:center;margin-top:9px;font-size:13px;font-weight:700;">Marcus Johansson</div></div>
+    <div><div class="sec-lbl">Progress</div><div class="tl"><div class="tl-item"><div class="tl-col"><div class="tldot dn">✓</div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-title">All stripes earned</div><div class="tl-date">10 March 2026</div></div></div><div class="tl-item"><div class="tl-col"><div class="tldot dn">✓</div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-title">Challenge set</div><div class="tl-date">11 March 2026</div></div></div><div class="tl-item"><div class="tl-col"><div class="tldot dn">✓</div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-title">Challenge completed</div><div class="tl-date">23 March 2026</div></div></div><div class="tl-item"><div class="tl-col"><div class="tldot dn">✓</div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-title">Parent confirmed</div><div class="tl-date">24 March 2026</div></div></div><div class="tl-item"><div class="tl-col"><div class="tldot ac">★</div></div><div class="tl-body"><div class="tl-title">Belt award — ready</div><div class="tl-date grn">Ready to award</div></div></div></div></div>
+    <div><div class="sec-lbl">Confirmation</div><div class="rdy-box"><div style="font-size:11px;font-weight:700;color:var(--grn);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Confirmed by parent</div><div style="font-size:13px;color:#173404;line-height:1.6;">"Marcus completed his challenge ahead of schedule."</div><div style="font-size:11px;color:#3B6D11;margin-top:7px;">David Johansson · 24 March 2026</div></div></div>
+    <button class="btn btn-grn btn-full" onclick="document.getElementById('award-modal').classList.add('op')">Award Kage Belt to Marcus Johansson</button>`;
+  } else {
+    const nm=who==='daisy'?'Daisy Park':'Nina Patel';const fc=who==='daisy'?'#e8702a':'#888888',fs=who==='daisy'?'#cc2222':'#1a1a1a';const tc=who==='daisy'?'#c42020':'#1a1a1a',ts=who==='daisy'?null:'#f0f0f0';const fn=who==='daisy'?'Kazan Belt':'Shin Kage Belt',tn=who==='daisy'?'Honoo Belt':'Mushin Belt';const dl=who==='daisy'?'27 March':'28 March';
+    body.innerHTML=`<div><div class="sec-lbl">Promotion</div><div class="bt-trans"><div class="bt-side"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;margin-bottom:6px;">Current</div><div class="bt-pip" style="background:${fc};">${fs?`<div class="bt-str" style="background:${fs};"></div>`:''}</div><div style="font-size:13px;font-weight:700;margin-top:6px;">${fn}</div></div><div style="font-size:24px;color:var(--tx3);">→</div><div class="bt-side"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;margin-bottom:6px;">Next</div><div class="bt-pip" style="background:${tc};">${ts?`<div class="bt-str" style="background:${ts};"></div>`:''}</div><div style="font-size:13px;font-weight:700;margin-top:6px;">${tn}</div></div></div><div style="text-align:center;margin-top:9px;font-size:13px;font-weight:700;">${nm}</div></div>
+    <div><div class="sec-lbl">Progress</div><div class="tl"><div class="tl-item"><div class="tl-col"><div class="tldot dn">✓</div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-title">All stripes earned</div></div></div><div class="tl-item"><div class="tl-col"><div class="tldot dn">✓</div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-title">Challenge set</div></div></div><div class="tl-item"><div class="tl-col"><div class="tldot ac">…</div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-title">In progress</div><div class="tl-date amb">Deadline ${dl}</div></div></div><div class="tl-item"><div class="tl-col"><div class="tldot lk">4</div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-title m">Parent confirms</div></div></div><div class="tl-item"><div class="tl-col"><div class="tldot lk">5</div></div><div class="tl-body"><div class="tl-title m">Belt awarded</div></div></div></div></div>
+    <div><div class="sec-lbl">Challenge</div><div class="chal-box"><div style="font-size:11px;font-weight:700;color:var(--gt);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Set by parent</div><div style="font-size:13px;color:#412402;line-height:1.6;">"${nm.split(' ')[0]} will complete homework independently every evening for two weeks."</div><div style="font-size:11px;color:#854F0B;margin-top:7px;">Deadline ${dl} 2026</div></div></div>
+    <div class="btn-locked">Award belt — waiting for parent confirmation</div>`;
+  }
+  goClasses('promo');
+}
+function awardBelt(){document.getElementById('award-modal').classList.remove('op');goClasses('award-success');}
+
+let dirSort='alpha';
+function setDS(s){dirSort=s;['alpha','class','belt','age'].forEach(k=>document.getElementById('sp-'+k).classList.toggle('on',k===s));renderDir();}
+function renderDir(){
+  const q=document.getElementById('dir-srch').value.toLowerCase().trim();let studs=STUDS.filter(s=>!q||s.name.toLowerCase().includes(q));
+  document.getElementById('dir-cnt').textContent=studs.length+' students';
+  const list=document.getElementById('dir-list');list.innerHTML='';
+  let groups=[];
+  if(dirSort==='alpha'){const so=[...studs].sort((a,b)=>a.name.localeCompare(b.name));[...new Set(so.map(s=>s.name[0].toUpperCase()))].forEach(l=>groups.push({label:l,items:so.filter(s=>s.name[0].toUpperCase()===l)}));}
+  else if(dirSort==='class'){const so=[...studs].sort((a,b)=>a.cid-b.cid||a.name.localeCompare(b.name));[...new Set(so.map(s=>s.cid))].forEach(id=>{const c=CLS.find(x=>x.id===id);groups.push({label:`${c.label} · ${c.day} · ${c.time}`,items:so.filter(s=>s.cid===id)});});}
+  else if(dirSort==='belt'){const so=[...studs].sort((a,b)=>a.bi-b.bi||a.name.localeCompare(b.name));[...new Set(so.map(s=>s.bi))].forEach(bi=>{const b=BD[bi];groups.push({label:b.n,items:so.filter(s=>s.bi===bi),bc:b.c,bs:b.s});});}
+  else{const so=[...studs].sort((a,b)=>a.age-b.age||a.name.localeCompare(b.name));[...new Set(so.map(s=>s.age))].forEach(age=>groups.push({label:'Age '+age,items:so.filter(s=>s.age===age)}));}
+  groups.forEach(g=>{
+    const ge=document.createElement('div');let lh='';if(g.bc)lh=`<span style="display:inline-block;width:18px;height:6px;border-radius:2px;background:${g.bc};vertical-align:middle;margin-right:6px;position:relative;overflow:hidden;">${g.bs?`<span style="position:absolute;top:25%;left:0;right:0;height:50%;background:${g.bs};display:block;"></span>`:''}</span>`;
+    ge.innerHTML=`<div class="glbl">${lh}${g.label}</div>`;
+    g.items.forEach(s=>{const b=BD[s.bi],ac=s.ap>=85?'#27500A':s.ap>=70?'#854F0B':'#791F1F';const row=document.createElement('div');row.className='drow';row.onclick=()=>openSP(s.id);row.innerHTML=`<div style="width:34px;height:34px;border-radius:50%;background:${s.ab};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:${s.at};flex-shrink:0;">${s.initials}</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--tx);">${s.name}</div><div style="font-size:11px;color:var(--tx3);">${s.clabel} · ${s.day}</div></div>${pip(b.c,b.s,22,7)}<div style="font-size:12px;font-weight:700;min-width:34px;text-align:right;color:${ac};">${s.ap}%</div><div style="color:var(--tx3);">›</div>`;ge.appendChild(row);});
+    list.appendChild(ge);
+  });
+}
+function openSP(id){
+  const s=STUDS.find(x=>x.id===id);const b=BD[s.bi];
+  const sdots=[0,1,2,3].map(i=>{const e=EL[i];return`<div style="width:13px;height:13px;border-radius:50%;border:1.5px solid ${s.str[i]?e.st:'#ccc'};background:${s.str[i]?e.f:'transparent'};position:relative;overflow:hidden;flex-shrink:0;"></div>`;}).join('');
+  const adots=s.att.map(a=>`<div style="width:10px;height:10px;border-radius:50%;flex-shrink:0;" class="dot-${a}"></div>`).join('');
+  const hasMed=s.med!=='None',hasSup=s.sup!=='None';
+  const mf=hasMed?`<span style="background:var(--rb);color:var(--rt);font-size:11px;font-weight:700;padding:3px 8px;border-radius:3px;">${s.med}</span>`:`<span style="color:var(--tx3);font-style:italic;font-size:12px;">None recorded</span>`;
+  const sf=hasSup?`<span style="background:var(--gb);color:var(--gt);font-size:11px;font-weight:700;padding:3px 8px;border-radius:3px;">${s.sup}</span>`:`<span style="color:var(--tx3);font-style:italic;font-size:12px;">None recorded</span>`;
+  document.getElementById('stud-modal-box').innerHTML=`<div class="mtop"><div class="mava">${s.initials}</div><div><div class="mtitle">${s.name}</div><div class="msub">Age ${s.age} · ${s.clabel} · ${s.day}</div></div><button class="mclose" onclick="document.getElementById('stud-modal').classList.remove('op')">✕</button></div><div class="mbody"><div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf2);border-radius:var(--rs);margin-bottom:14px;">${pip(b.c,b.s,34,11)}<span style="font-size:13px;font-weight:700;">${b.n}</span><div style="display:flex;gap:4px;margin-left:8px;">${sdots}</div></div><div class="msec"><div class="msec-t">Attendance</div><div class="irow"><span class="il">This term</span><div style="display:flex;gap:3px;">${adots}</div></div><div class="irow"><span class="il">Rate</span><span class="iv" style="color:${s.ap>=85?'#27500A':s.ap>=70?'#854F0B':'#791F1F'};">${s.ap}%</span></div></div><div class="medlk"><div class="medhdr" onclick="tgMed()"><div style="display:flex;align-items:center;gap:9px;"><span style="font-size:16px;">🔒</span><div><div class="medtit">Medical &amp; support</div><div class="medhint">Tap to view — sensitive data</div></div></div><button class="medreveal" id="med-btn">View</button></div><div class="medcont" id="med-cont"><div class="irow"><span class="il">Medical</span>${mf}</div><div class="irow"><span class="il">Support</span>${sf}</div></div></div><div class="msec"><div class="msec-t">Parent / guardian</div><div class="irow"><span class="il">Name</span><span class="iv">${s.pn}</span></div><div class="irow"><span class="il">Phone</span><span class="iv lnk">${s.ph}</span></div><div class="irow"><span class="il">Email</span><span class="iv lnk" style="font-size:11px;">${s.pe}</span></div></div><div class="msec"><div class="msec-t">Emergency contact</div><div class="irow"><span class="il">Name</span><span class="iv">${s.en}</span></div><div class="irow"><span class="il">Phone</span><span class="iv lnk">${s.ep}</span></div></div></div>`;
+  document.getElementById('stud-modal').classList.add('op');
+}
+function tgMed(){const c=document.getElementById('med-cont'),b=document.getElementById('med-btn'),o=c.classList.toggle('op');b.textContent=o?'Hide':'View';}
+function closeStudModal(e){if(e.target===document.getElementById('stud-modal'))document.getElementById('stud-modal').classList.remove('op');}
+
+function buildSD(){
+  const tot=BD.map((_,i)=>CLS.reduce((a,c)=>a+(c.bd[i]||0),0));const mx=Math.max(...tot,1);
+  document.getElementById('sd-belts').innerHTML=bd(tot,mx);
+  document.getElementById('ring-enrol').innerHTML=ring(80,'#639922',52)+`<div><div style="font-size:20px;font-weight:700;">271<span style="font-size:13px;font-weight:400;color:var(--tx3);">/336</span></div><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;margin-top:2px;">Students</div></div>`;
+  document.getElementById('ring-att').innerHTML=ring(88,'#378ADD',52)+`<div><div style="font-size:20px;font-weight:700;">88%</div><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;margin-top:2px;">Attendance</div></div>`;
+  document.getElementById('sd-growth').innerHTML=gb();
+}
+function buildOv(){const tot=BD.map((_,i)=>CLS.reduce((a,c)=>a+(c.bd[i]||0),0));const mx=Math.max(...tot,1);document.getElementById('ov-belts').innerHTML=bd(tot,mx);document.getElementById('ov-growth').innerHTML=gb();renderOvHist();}
+
+let homeDay=2;
+function renderHW(){
+  const strip=document.getElementById('h-wstrip');strip.innerHTML='';
+  DAYS_S.forEach((d,i)=>{const has=CLS.some(c=>c.day===DAYS_O[i]);const btn=document.createElement('div');btn.className=`dbtn${i===homeDay?' on':''}${has?' hc':''}`;btn.innerHTML=`<div class="dbn">${d}</div><div class="dbnum">${DATES[i]}</div><div class="dbdot${has?'':' h'}"></div>`;btn.onclick=()=>{homeDay=i;renderHW();};strip.appendChild(btn);});
+  const wc=document.getElementById('h-wclasses');wc.innerHTML='';
+  const cls=CLS.filter(c=>c.day===DAYS_O[homeDay]);
+  if(!cls.length){wc.innerHTML=`<div style="font-size:12px;color:var(--tx3);font-style:italic;padding:8px 0;">No classes scheduled</div>`;return;}
+  cls.forEach(c=>{const pct=Math.round(c.enrolled/c.cap*100);const card=document.createElement('div');card.className='cc'+(c.next?' nxt':'');card.style.marginBottom='8px';card.onclick=()=>openClass(c.id);card.innerHTML=`<div style="display:flex;align-items:center;gap:9px;"><div style="font-size:12px;font-weight:700;color:var(--tx2);min-width:42px;">${c.time}</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;">${c.label} · ${c.mat}</div><div style="font-size:11px;color:var(--tx3);">${c.enrolled}/${c.cap} · ${c.cap-c.enrolled} free</div></div><div style="text-align:right;"><div style="font-size:12px;font-weight:700;color:${cc(pct)};">${pct}%</div><div class="capbar" style="width:42px;"><div class="capfill" style="width:${pct}%;background:${cc(pct)};"></div></div></div><div style="color:var(--tx3);">›</div></div>`;wc.appendChild(card);});
+}
+
+gen();
+const myTot=MY_IDS.reduce((a,id)=>{const c=CLS.find(x=>x.id===id);return a+(c?c.enrolled:0);},0);
+document.getElementById('home-total').textContent=myTot+' students';
+renderCL();renderDir();buildSD();buildOv();renderHW();goClasses('overview');
+</script>
+</body>
+</html>
