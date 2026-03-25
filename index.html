@@ -105,6 +105,24 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;bac
 .home-bar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
   width:120px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;z-index:50;}
 </style>
+
+  <!-- PWA: App-Like Behaviour on iPhone -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ninja Learning">
+  <meta name="theme-color" content="#1A1A2E">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log('SW registered'))
+          .catch(err => console.log('SW error:', err));
+      });
+    }
+  </script>
+  <!-- END PWA -->
 </head>
 <body>
 <div class="shell">
