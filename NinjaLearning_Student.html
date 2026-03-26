@@ -2,7 +2,35 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- Force landscape orientation for student profiles -->
+  <style>
+    @media screen and (orientation: portrait) {
+      body::before {
+        content: '';
+        display: block;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: #0A0A0A;
+        z-index: 99999;
+      }
+      body::after {
+        content: 'Please rotate your device to landscape';
+        display: block;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(0deg);
+        color: #F0C830;
+        font-size: 16px;
+        font-family: sans-serif;
+        text-align: center;
+        z-index: 100000;
+        width: 240px;
+      }
+    }
+  </style>
 <title>Ninja Learning — Student Profile</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -427,6 +455,13 @@ body{
     }
   </script>
   <!-- END PWA -->
+
+  <script>
+    // Request landscape orientation if Screen Orientation API is available
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('landscape').catch(() => {});
+    }
+  </script>
 </head>
 <body>
 <div class="shell">
