@@ -1,7 +1,7 @@
 // Ninja Learning — Service Worker
 // Caches app files for offline use
 
-const CACHE_NAME = 'ninja-learning-v1';
+const CACHE_NAME = 'ninja-learning-v2';
 
 const CACHED_FILES = [
   '/Ninja-Learning-App-Demo/',
