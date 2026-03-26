@@ -70,7 +70,7 @@ body{
 .avatar-fig{
   width:52%;aspect-ratio:1/1.75;
   background:rgba(255,255,255,0.06);
-  border:2px dashed rgba(255,255,255,0.18);border-radius:16px;
+  border:none;border-radius:16px;
   display:flex;align-items:center;justify-content:center;
   font-size:13px;color:rgba(255,255,255,0.28);text-align:center;line-height:1.6;
 }
@@ -208,7 +208,7 @@ body{
 .train-avatar-center{width:116px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:4px;}
 .train-col-right{flex:1;display:flex;flex-direction:column;gap:10px;overflow-y:auto;}
 .train-col-right::-webkit-scrollbar{display:none;}
-.train-avatar-fig{width:84px;aspect-ratio:1/1.7;background:rgba(255,255,255,0.06);border:2px dashed rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.25);text-align:center;}
+.train-avatar-fig{width:84px;aspect-ratio:1/1.7;background:rgba(255,255,255,0.06);border:none;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.25);text-align:center;}
 .train-belt-pip{width:60px;height:18px;border-radius:4px;position:relative;overflow:hidden;flex-shrink:0;}
 .train-belt-stripe{position:absolute;top:30%;left:0;right:0;height:40%;}
 .train-belt-name{font-size:10px;color:rgba(255,255,255,0.5);text-align:center;}
@@ -483,7 +483,7 @@ body{
 <div class="scr on" id="scr-profile">
 <div class="profile-wrap">
   <div class="avatar-col">
-    <div class="avatar-fig"><span>3D<br>Avatar</span></div>
+    <div class="avatar-fig"><img src="avatar-male.png" alt="Student avatar" style="width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:14px;"></div>
     <div class="stripes-row" id="profile-stripes"></div>
     <div class="belt-badge" id="profile-belt-badge"></div>
     <div class="stats-strip">
@@ -557,7 +557,7 @@ body{
         <div id="upcoming-list"></div>
       </div>
       <div class="train-avatar-center">
-        <div class="train-avatar-fig"><span>3D<br>Avatar</span></div>
+        <div class="train-avatar-fig"><img src="avatar-male.png" alt="Student avatar" style="width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:14px;"></div>
         <div class="train-belt-pip" id="train-belt-pip"></div>
         <div class="train-belt-name" id="train-belt-name">—</div>
       </div>
@@ -623,7 +623,7 @@ body{
   <div class="ach-wrap">
     <!-- Left: Avatar -->
     <div class="ach-avatar-col" id="ach-avatar-col">
-      <div class="ach-avatar-fig"><span>3D<br>Avatar</span></div>
+      <div class="ach-avatar-fig"><img src="avatar-female.png" alt="Student avatar" style="width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:14px;"></div>
       <div class="ach-student-name" id="ach-student-name">—</div>
       <div class="ach-belt-pip" id="ach-belt-pip"></div>
       <div class="ach-belt-name" id="ach-belt-name">—</div>
